@@ -1,0 +1,144 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block main_content %}
+<div class="welcome-card">
+    <h3>Welcome, {{ current_user.full_name }}!</h3>
+    
+    {% if payment_required %}
+    <div class="alert warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <h4>Payment Required</h4>
+            <p>Your application has been approved! Please proceed with the payment to complete your enrollment.</p>
+            {% for application in applications if application.status == 'Documents Approved' and application.payment_status == 'Pending' %}
+                {% if loop.first %}
+                <a href="{{ url_for('student_payment', app_id=application.id) }}" class="btn primary mt-3">Make Payment</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if certificate_ready %}
+    <div class="alert success">
+        <i class="fas fa-check-circle"></i>
+        <div>
+            <h4>Certificate Ready</h4>
+            <p>Your certificate is ready for pickup. Please visit the administration office with your ID.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="dashboard-grid">
+    <div class="card">
+        <div class="card-header">
+            <h3>Application Status</h3>
+        </div>
+        <div class="card-body">
+            {% if applications %}
+                {% set latest_app = applications|sort(attribute='date_submitted', reverse=true)|first %}
+                <div class="info-row">
+                    <span class="info-label">Program:</span>
+                    <span class="info-value">{{ latest_app.program }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Status:</span>
+                    <span class="status-badge 
+                        {% if latest_app.status == 'Pending Review' %}yellow
+                        {% elif latest_app.status == 'Documents Approved' %}green
+                        {% elif latest_app.status == 'Documents Rejected' %}red
+                        {% endif %}">
+                        {{ latest_app.status }}
+                    </span>
+                </div>
+                <div class="info-row mb-4">
+                    <span class="info-label">Payment:</span>
+                    <span class="status-badge 
+                        {% if latest_app.payment_status == 'Pending' %}yellow
+                        {% elif latest_app.payment_status == 'Paid' %}green
+                        {% endif %}">
+                        {{ latest_app.payment_status }}
+                    </span>
+                </div>
+                
+                {% if latest_app.status == 'Documents Approved' and latest_app.payment_status == 'Pending' %}
+                    <a href="{{ url_for('student_payment', app_id=latest_app.id) }}" class="btn primary full-width">Pay Now</a>
+                {% endif %}
+            {% else %}
+                <div class="text-center">
+                    <p class="text-muted">No applications found</p>
+                    <a href="{{ url_for('student_new_application') }}" class="btn primary mt-3">Apply Now</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h3>Documents</h3>
+        </div>
+        <div class="card-body">
+            {% if documents %}
+                <ul class="document-list">
+                    {% for document in documents|sort(attribute='uploaded_at', reverse=true)|slice(0, 3) %}
+                        <li class="document-item">
+                            <span>{{ document.name }}</span>
+                            <span class="status-badge 
+                                {% if document.status == 'Uploaded' %}blue
+                                {% elif document.status == 'Verified' %}green
+                                {% elif document.status == 'Rejected' %}red
+                                {% endif %}">
+                                {{ document.status }}
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+                
+                <a href="{{ url_for('student_upload_document') }}" class="btn primary full-width mt-4">Upload New Document</a>
+            {% else %}
+                <div class="text-center">
+                    <p class="text-muted">No documents found</p>
+                    <a href="{{ url_for('student_upload_document') }}" class="btn primary mt-3">Upload Document</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h3>Support Tickets</h3>
+        </div>
+        <div class="card-body">
+            {% if tickets %}
+                <ul class="ticket-list">
+                    {% for ticket in tickets|sort(attribute='created_at', reverse=true)|slice(0, 3) %}
+                        <li class="ticket-item">
+                            <div>
+                                <p class="ticket-subject">{{ ticket.subject }}</p>
+                                <p class="ticket-date">{{ ticket.created_at.strftime('%Y-%m-%d') }}</p>
+                            </div>
+                            <span class="status-badge 
+                                {% if ticket.status == 'Open' %}red
+                                {% elif ticket.status == 'In Progress' %}yellow
+                                {% elif ticket.status == 'Closed' %}green
+                                {% endif %}">
+                                {{ ticket.status }}
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+                
+                <a href="{{ url_for('student_new_ticket') }}" class="btn primary full-width mt-4">New Support Ticket</a>
+            {% else %}
+                <div class="text-center">
+                    <p class="text-muted">No support tickets</p>
+                    <a href="{{ url_for('student_new_ticket') }}" class="btn primary mt-3">Create Ticket</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

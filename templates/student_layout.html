@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Student Portal - University Portal{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h1 id="sidebar-title">Student Portal</h1>
+            <button id="toggle-sidebar" class="btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('student_dashboard') }}" class="nav-item {% if request.endpoint == 'student_dashboard' %}active{% endif %}">
+                <i class="fas fa-home"></i>
+                <span class="nav-text">Home</span>
+            </a>
+            
+            
+            <a href="{{ url_for('student_applications') }}" class="nav-item {% if request.endpoint == 'student_applications' or request.endpoint == 'student_new_application' %}active{% endif %}">
+                <i class="fas fa-file-alt"></i>
+                <span class="nav-text">My Applications</span>
+            </a>
+            <a href="{{ url_for('student_documents') }}" class="nav-item {% if request.endpoint == 'student_documents' or request.endpoint == 'student_upload_document' %}active{% endif %}">
+                <i class="fas fa-upload"></i>
+                <span class="nav-text">Documents</span>
+            </a>
+            <a href="{{ url_for('student_certificates') }}" class="nav-item {% if request.endpoint == 'student_certificates' or request.endpoint == 'student_request_certificate' %}active{% endif %}">
+                <i class="fas fa-award"></i>
+                <span class="nav-text">Certificates</span>
+            </a>
+            <a href="{{ url_for('student_support') }}" class="nav-item {% if request.endpoint == 'student_support' or request.endpoint == 'student_new_ticket' or request.endpoint == 'student_ticket_detail' %}active{% endif %}">
+                <i class="fas fa-comment"></i>
+                <span class="nav-text">Support</span>
+            </a>
+            <a href="{{ url_for('student_settings') }}" class="nav-item {% if request.endpoint == 'student_settings' %}active{% endif %}">
+                <i class="fas fa-cog"></i>
+                <span class="nav-text">Settings</span>
+            </a>
+            <a href="{{ url_for('student_courses') }}" class="nav-item {% if request.endpoint == 'student_courses' %}active{% endif %}">
+                <i class="fas fa-book"></i>
+                <span class="nav-text">My Courses</span>
+            </a>
+        </nav>
+        <div class="logout-container">
+            <a href="{{ url_for('logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="nav-text">Logout</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Header -->
+        <header class="header">
+            <div class="header-content">
+                <h2 id="page-title">{% block page_title %}Dashboard{% endblock %}</h2>
+                <div class="header-actions">
+                    <div class="notification-container">
+                        <button id="notification-btn" class="btn-icon">
+                            <i class="fas fa-bell"></i>
+                            {% set unread_notifications = current_user.notifications|selectattr('read', 'equalto', false)|list %}
+                            {% if unread_notifications %}
+                                <span id="notification-badge" class="notification-badge">{{ unread_notifications|length }}</span>
+                            {% endif %}
+                        </button>
+                        
+                        <!-- Notifications Panel -->
+                        <div id="notifications-panel" class="notifications-panel hidden">
+                            <div class="notifications-header">
+                                <h3>Notifications</h3>
+                                <button id="mark-all-read" class="btn-text">Mark all as read</button>
+                            </div>
+                  
+                            <div class="notifications-list">
+                                {% if current_user.notifications %}
+                                    {% set notification_count = 0 %}
+                                    {% for notification in current_user.notifications|sort(attribute='created_at', reverse=true) %}
+                                        {% if notification_count < 10 %}
+                                            <div class="notification-item {% if not notification.read %}unread{% endif %}">
+                                                <p>{{ notification.message }}</p>
+                                                <p class="notification-time">{{ notification.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                                            </div>
+                                            {% set notification_count = notification_count + 1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="notification-item">
+                                        <p>No notifications</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+                    
+                    <div class="user-container">
+                        <div class="avatar">
+                            {{ current_user.full_name|initials }}
+                        </div>
+                        <span id="user-name" class="user-name">{{ current_user.full_name }}</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content Area -->
+        <main class="content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert {{ category }}">
+                            <p>{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            {% block main_content %}
+            <!-- Main content will be inserted here -->
+            {% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+<script>
+// Add this to handle sidebar toggle on mobile
+document.getElementById('toggle-sidebar')?.addEventListener('click', function() {
+    document.getElementById('sidebar').classList.toggle('active');
+});
+</script>
+{% endblock %}

@@ -1,0 +1,231 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}My Certificates{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header-with-actions">
+        <h3>My Certificates</h3>
+        <a href="{{ url_for('student_request_certificate') }}" class="btn primary">Request Certificate</a>
+    </div>
+    
+    <div class="card-body">
+        {% if certificates %}
+            <div class="table-container">
+                <table class="full-width-table">
+                    <thead>
+                        <tr>
+                            <th>Certificate ID</th>
+                            <th>Type</th>
+                            <th>Request Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for certificate in certificates|sort(attribute='request_date', reverse=true) %}
+                            <tr>
+                                <td>{{ certificate.cert_id }}</td>
+                                <td>{{ certificate.type }}</td>
+                                <td>{{ certificate.request_date.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    <span class="status-badge 
+                                        {% if certificate.status == 'Pending Payment' %}yellow
+                                        {% elif certificate.status == 'Processing' %}blue
+                                        {% elif certificate.status == 'Ready for Pickup' %}green
+                                        {% endif %}">
+                                        {{ certificate.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if certificate.status == 'Pending Payment' %}
+                                        <a href="{{ url_for('student_certificate_payment', cert_id=certificate.id) }}" class="btn primary btn-sm">
+                                            Pay Fee
+                                        </a>
+                                    {% elif certificate.status == 'Processing' %}
+                                        <span class="text-muted">In progress</span>
+                                    {% elif certificate.status == 'Ready for Pickup' %}
+                                        <span class="text-success">Ready at Admin Office</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-10">
+                <p class="text-muted mb-4">You haven't requested any certificates yet.</p>
+                <a href="{{ url_for('student_request_certificate') }}" class="btn primary">Request Certificate</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mt-6">
+    <div class="card-header">
+        <h3>Certificate Information</h3>
+    </div>
+    
+    <div class="card-body">
+        <h4 class="mb-4">Available Certificate Types</h4>
+        <div class="table-container">
+            <table class="full-width-table">
+                <thead>
+                    <tr>
+                        <th>Certificate Type</th>
+                        <th>Description</th>
+                        <th>Processing Time</th>
+                        <th>Fee</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Enrollment Certificate</td>
+                        <td>Confirms your enrollment in a program</td>
+                        <td>1-2 business days</td>
+                        <td>200 EGP</td>
+                    </tr>
+                    <tr>
+                        <td>Transcript</td>
+                        <td>Official record of all courses and grades</td>
+                        <td>2-3 business days</td>
+                        <td>200 EGP</td>
+                    </tr>
+                    <tr>
+                        <td>Graduation Certificate</td>
+                        <td>Verifies completion of program</td>
+                        <td>3-5 business days</td>
+                        <td>200 EGP</td>
+                    </tr>
+                    <tr>
+                        <td>Certificate of Good Standing</td>
+                        <td>Confirms you are a student in good academic standing</td>
+                        <td>1-2 business days</td>
+                        <td>200 EGP</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="alert info mt-6">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <h4>Certificate Pickup Information</h4>
+                <p>Once your certificate is ready for pickup, please visit the Administration Office with your student ID to collect it.</p>
+                <p class="mt-2"><strong>Office Hours:</strong> Sunday to Thursday, 9:00 AM to 3:00 PM</p>
+                <p><strong>Location:</strong> Administration Building, Room 102</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if certificates %}
+<div class="card mt-6">
+    <div class="card-header">
+        <h3>Certificate Request History</h3>
+    </div>
+    
+    <div class="card-body">
+        <div class="timeline">
+            {% for certificate in certificates|sort(attribute='request_date', reverse=true)|slice(0, 5) %}
+                <div class="timeline-item">
+                    <div class="timeline-marker 
+                        {% if certificate.status == 'Pending Payment' %}yellow
+                        {% elif certificate.status == 'Processing' %}blue
+                        {% elif certificate.status == 'Ready for Pickup' %}green
+                        {% endif %}">
+                    </div>
+                    <div class="timeline-content">
+                        <h4 class="timeline-title">{{ certificate.type }}</h4>
+                        <p class="timeline-date">{{ certificate.request_date.strftime('%B %d, %Y') }}</p>
+                        <p>Certificate ID: {{ certificate.cert_id }}</p>
+                        <span class="status-badge 
+                            {% if certificate.status == 'Pending Payment' %}yellow
+                            {% elif certificate.status == 'Processing' %}blue
+                            {% elif certificate.status == 'Ready for Pickup' %}green
+                            {% endif %}">
+                            {{ certificate.status }}
+                        </span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Timeline styles */
+    .timeline {
+        position: relative;
+        margin: 1rem 0;
+        padding-left: 2rem;
+    }
+    
+    .timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0.5rem;
+        width: 2px;
+        background-color: #e5e7eb;
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+    
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .timeline-marker {
+        position: absolute;
+        top: 0;
+        left: -2rem;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background-color: #d1d5db;
+    }
+    
+    .timeline-marker.yellow {
+        background-color: #fbbf24;
+    }
+    
+    .timeline-marker.blue {
+        background-color: #3b82f6;
+    }
+    
+    .timeline-marker.green {
+        background-color: #10b981;
+    }
+    
+    .timeline-content {
+        padding: 0.5rem 1rem;
+        background-color: #f9fafb;
+        border-radius: 0.5rem;
+    }
+    
+    .timeline-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .timeline-date {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}

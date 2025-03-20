@@ -1,0 +1,94 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}Edit Project{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header">
+        <h3>تعديل المشروع</h3>
+    </div>
+    
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin_edit_project', project_id=project.id) }}" enctype="multipart/form-data" class="max-w-lg">
+            <!-- Add CSRF token -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+            <div class="form-group mb-3">
+                <label for="title">عنوان المشروع</label>
+                <input type="text" id="title" name="title" class="form-control" 
+                       value="{{ project.title }}" required>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label for="description">وصف المشروع</label>
+                <textarea id="description" name="description" class="form-control" 
+                          rows="5" required>{{ project.description }}</textarea>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label for="category">التصنيف</label>
+                <input type="text" id="category" name="category" class="form-control" 
+                       value="{{ project.category }}" required>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label for="url">رابط المشروع (اختياري)</label>
+                <input type="url" id="url" name="url" class="form-control" 
+                       value="{{ project.url }}">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="image">صورة المشروع</label>
+                {% if project.image_path %}
+                <div class="current-image mb-2">
+                    <div style="width: 200px; height: 120px; overflow: hidden;">
+                        <img src="{{ url_for('static', filename=project.image_path) }}" 
+                             alt="Project image"
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                </div>
+                {% endif %}
+                <input type="file" id="image" name="image" class="form-control" 
+                       accept="image/*">
+            </div>
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="is_active" name="is_active" 
+                       {% if project.is_active %}checked{% endif %}>
+                <label class="form-check-label" for="is_active">Active</label>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="is_popular" name="is_popular"
+                       {% if project.is_popular %}checked{% endif %}>
+                <label class="form-check-label" for="is_popular">Popular</label>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                <a href="{{ url_for('admin_projects') }}" class="btn btn-secondary">إلغاء</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('image').addEventListener('change', function(e) {
+    if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.querySelector('.current-image img');
+            if (preview) {
+                preview.src = e.target.result;
+            } else {
+                const newPreview = document.createElement('div');
+                newPreview.className = 'current-image mb-2';
+                newPreview.innerHTML = `<img src="${e.target.result}" alt="Project image" class="img-thumbnail" style="max-width: 200px">`;
+                this.parentElement.insertBefore(newPreview, this);
+            }
+        };
+        reader.readAsDataURL(this.files[0]);
+    }
+});
+</script>
+{% endblock %}

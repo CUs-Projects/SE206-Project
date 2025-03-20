@@ -1,0 +1,247 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}Ticket #{{ ticket.ticket_id }}{% endblock %}
+
+{% block main_content %}
+<div class="card mb-6">
+    <div class="card-header-with-actions">
+        <div>
+            <h3>{{ ticket.subject }}</h3>
+            <p class="text-muted">Ticket ID: {{ ticket.ticket_id }}</p>
+        </div>
+        <div>
+            <select id="ticket-status" class="form-input ticket-status-select" data-id="{{ ticket.id }}">
+                <option value="Open" {% if ticket.status == 'Open' %}selected{% endif %}>Open</option>
+                <option value="In Progress" {% if ticket.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                <option value="Closed" {% if ticket.status == 'Closed' %}selected{% endif %}>Closed</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="card-body">
+        <div class="info-row">
+            <span class="info-label">Student:</span>
+            <span class="info-value">{{ ticket.user.full_name }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Created:</span>
+            <span class="info-value">{{ ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+        </div>
+        <div class="info-row mb-4">
+            <span class="info-label">Status:</span>
+            <span class="status-badge 
+                {% if ticket.status == 'Open' %}red
+                {% elif ticket.status == 'In Progress' %}yellow
+                {% elif ticket.status == 'Closed' %}green
+                {% endif %}">
+                {{ ticket.status }}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Conversation</h3>
+    </div>
+    
+    <div class="card-body p-0">
+        <div class="chat-container">
+            <div class="chat-messages">
+                {% for message in ticket.messages %}
+                    <div class="chat-message {% if message.sender == 'Admin' %}outgoing{% else %}incoming{% endif %}">
+                        <div class="message-content">
+                            <p>{{ message.message }}</p>
+                            <p class="message-time">{{ message.created_at.strftime('%Y-%m-%d %H:%M') }} - {{ message.sender }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            {% if ticket.status != 'Closed' %}
+                <form id="admin-reply-form" class="chat-form" data-ticket-id="{{ ticket.id }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="text" id="admin-reply-message" placeholder="Type your message here" required>
+                    <button type="submit" class="btn primary">Send</button>
+                </form>
+            {% else %}
+                <div class="p-4 text-center border-t">
+                    <p class="text-muted">This ticket is closed. Reopen it to reply.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="form-actions mt-4">
+    <a href="{{ url_for('admin_tickets') }}" class="btn outline">Back to Tickets</a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Auto-scroll chat to bottom on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatMessages = document.querySelector('.chat-messages');
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+    
+    // Update ticket status
+    document.getElementById('ticket-status').addEventListener('change', function() {
+        const ticketId = this.getAttribute('data-id');
+        const newStatus = this.value;
+        
+        const formData = new FormData();
+        formData.append('status', newStatus);
+        formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
+        
+        fetch(`/admin/tickets/update_status/${ticketId}`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update status badge
+                const statusBadge = document.querySelector('.info-row .status-badge');
+                
+                let statusClass = '';
+                switch(newStatus) {
+                    case 'Open':
+                        statusClass = 'red';
+                        break;
+                    case 'In Progress':
+                        statusClass = 'yellow';
+                        break;
+                    case 'Closed':
+                        statusClass = 'green';
+                        break;
+                }
+                
+                statusBadge.className = `status-badge ${statusClass}`;
+                statusBadge.textContent = newStatus;
+                
+                // Show/hide reply form
+                const replyForm = document.getElementById('admin-reply-form');
+                const closedMessage = document.querySelector('.chat-form + .p-4');
+                
+                if (newStatus === 'Closed') {
+                    replyForm.style.display = 'none';
+                    if (closedMessage) {
+                        closedMessage.style.display = 'block';
+                    } else {
+                        const closedDiv = document.createElement('div');
+                        closedDiv.className = 'p-4 text-center border-t';
+                        closedDiv.innerHTML = '<p class="text-muted">This ticket is closed. Reopen it to reply.</p>';
+                        replyForm.insertAdjacentElement('afterend', closedDiv);
+                    }
+                } else {
+                    replyForm.style.display = 'flex';
+                    if (closedMessage) {
+                        closedMessage.style.display = 'none';
+                    }
+                }
+                
+                // Show success message
+                alert(`Ticket status updated to ${newStatus}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    });
+    
+    // Submit reply
+    document.getElementById('admin-reply-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const ticketId = this.getAttribute('data-ticket-id');
+        const messageInput = document.getElementById('admin-reply-message');
+        const message = messageInput.value.trim();
+        const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+        
+        if (!message) {
+            alert('Please enter a message');
+            return;
+        }
+        
+        // Disable form while sending
+        messageInput.disabled = true;
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        
+        const formData = new FormData();
+        formData.append('message', message);
+        formData.append('csrf_token', csrfToken);
+        
+        fetch(`/admin/tickets/reply/${ticketId}`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Add message to chat
+                const chatMessages = document.querySelector('.chat-messages');
+                const now = new Date().toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const newMessage = document.createElement('div');
+                newMessage.className = 'chat-message outgoing';
+                newMessage.innerHTML = `
+                    <div class="message-content">
+                        <p>${message}</p>
+                        <p class="message-time">${now} - Admin</p>
+                    </div>
+                `;
+                
+                chatMessages.appendChild(newMessage);
+                
+                // Clear input and reset button
+                messageInput.value = '';
+                messageInput.disabled = false;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Send';
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // If status is 'Open', change it to 'In Progress'
+                const statusSelect = document.getElementById('ticket-status');
+                if (statusSelect.value === 'Open') {
+                    statusSelect.value = 'In Progress';
+                    statusSelect.dispatchEvent(new Event('change'));
+                }
+            } else {
+                alert('Error: ' + (data.message || 'Failed to send message'));
+                // Reset button
+                messageInput.disabled = false;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Send';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+            // Reset button
+            messageInput.disabled = false;
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Send';
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}Projects Repository{% endblock %}
+
+{% block main_content %}
+<div class="admin-header">
+    <h1>Projects Repository</h1>
+    <a href="{{ url_for('admin_new_project') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add New Project
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Active</th>
+                        <th>Popular</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                        <tr>
+                            <td>{{ project.id }}</td>
+                            <td>
+                                {% if project.image_path %}
+                                <div style="width: 100px; height: 60px; overflow: hidden;">
+                                    <img src="{{ url_for('static', filename=project.image_path) }}" 
+                                         alt="{{ project.title }}"
+                                         class="thumbnail-img"
+                                         style="width: 100%; height: 100%; object-fit: cover;"
+                                         onerror="this.src='{{ url_for('static', filename='img/default-project.jpg') }}'">
+                                </div>
+                                {% else %}
+                                <div style="width: 100px; height: 60px; overflow: hidden;">
+                                    <img src="{{ url_for('static', filename='img/default-project.jpg') }}" 
+                                         alt="No image"
+                                         class="thumbnail-img"
+                                         style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>{{ project.title }}</td>
+                            <td>{{ project.category }}</td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input toggle-status" 
+                                           type="checkbox" 
+                                           data-project-id="{{ project.id }}"
+                                           data-status-type="active"
+                                           {% if project.is_active %}checked{% endif %}>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input toggle-status" 
+                                           type="checkbox" 
+                                           data-project-id="{{ project.id }}"
+                                           data-status-type="popular"
+                                           {% if project.is_popular %}checked{% endif %}>
+                                </div>
+                            </td>
+                            <td>{{ project.created_at|format_date }}</td>
+                            <td>
+                                <a href="{{ url_for('admin_edit_project', project_id=project.id) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="btn btn-sm btn-danger delete-project" data-project-id="{{ project.id }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center">No projects added yet</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Get CSRF token from meta tag
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // Toggle project status (active/popular)
+    document.querySelectorAll('.toggle-status').forEach(function(toggle) {
+        toggle.addEventListener('change', function() {
+            const projectId = this.getAttribute('data-project-id');
+            const statusType = this.getAttribute('data-status-type');
+            
+            fetch(`/admin/projects/toggle-status/${projectId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: `status_type=${statusType}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success notification
+                    const message = statusType === 'active' ? 
+                        `Project is now ${data.status}` : 
+                        `Project is now marked as ${data.status}`;
+                    
+                    // You could implement a toast notification here
+                    console.log(message);
+                }
+            });
+        });
+    });
+    
+    // Delete project
+    document.querySelectorAll('.delete-project').forEach(function(button) {
+        button.addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete this project?')) {
+                const projectId = this.getAttribute('data-project-id');
+                
+                fetch(`/admin/projects/delete/${projectId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the row from the table
+                        this.closest('tr').remove();
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

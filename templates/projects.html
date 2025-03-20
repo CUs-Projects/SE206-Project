@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> مستودع المشاريع    </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #0D1D4E;
+      --secondary-color: #433AC8;
+      --dark-color: #1a1a1a;
+      --light-color: #f8f9fa;
+      --transition: all 0.3s ease;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+      text-align: right; /* Align text to the right */
+    }
+    
+    /* Navbar Styles */
+    .navbar {
+      background-color: var(--primary-color);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 0.8rem 1rem;
+    }
+    
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white !important;
+    }
+    
+    .nav-link {
+      color: white !important;
+      margin: 0 0.3rem;
+      font-weight: 500;
+      position: relative;
+      padding: 0.5rem 0.8rem !important;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      right: 0; /* Change left to right */
+      background-color: white;
+      transition: var(--transition);
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    .btn-login {
+      background-color: transparent;
+      border: 1px solid white;
+      color: white !important;
+      transition: var(--transition);
+    }
+    
+    .btn-login:hover {
+      background-color: white;
+      color: var(--primary-color) !important;
+    }
+    
+    .btn-apply {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11);
+    }
+    
+    .btn-apply:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1);
+    }
+    
+    /* Header Section */
+    .header-section {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 3rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header-section::after {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      right: -50%; /* Change left to right */
+      background: radial-gradient(rgba(255, 255, 255, 0.1), transparent);
+      z-index: 1;
+    }
+    
+    .header-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+    
+    /* Program Categories */
+    .category-card {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      border: none;
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    
+    .category-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .category-img {
+      height: 180px;
+      object-fit: cover;
+    }
+    
+    .category-overlay {
+      position: absolute;
+      top: 0;
+      right: 0; /* Change left to right */
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+      display: flex;
+      align-items: flex-end;
+    }
+    
+    .category-content {
+      padding: 1.5rem;
+      color: white;
+      width: 100%;
+    }
+    
+    .category-icon {
+      width: 50px;
+      height: 50px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    
+    /* Program Cards */
+    .program-card {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      border: none;
+      margin-bottom: 1.5rem;
+    }
+    
+    .program-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .program-img {
+      height: 200px;
+      object-fit: cover;
+    }
+    
+    .program-tag {
+      position: absolute;
+      top: 10px;
+      left: 10px; /* Change right to left */
+      z-index: 2;
+    }
+    
+    .program-details {
+      padding: 0.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f5f5f5;
+      font-size: 0.9rem;
+    }
+    
+    .program-details span {
+      display: flex;
+      align-items: center;
+    }
+    
+    .program-details i {
+      margin-left: 5px; /* Change margin-right to margin-left */
+      color: var(--primary-color);
+    }
+    
+    .program-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--dark-color);
+    }
+    
+    /* FAQ Section */
+    .faq-item {
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .faq-header {
+      padding: 1rem;
+      background-color: #f5f5f5;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .faq-header:hover {
+      background-color: #e9ecef;
+    }
+    
+    .faq-header h5 {
+      margin: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .faq-icon {
+      transition: var(--transition);
+    }
+    
+    .faq-body {
+      padding: 1rem;
+      display: none;
+    }
+    
+    .faq-header.active .faq-icon {
+      transform: rotate(180deg);
+    }
+    
+    .faq-header.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    /* Testimonials */
+    .testimonial-section {
+      background-color: #f5f5f5;
+    }
+    
+    .testimonial-card {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      border: none;
+      margin-bottom: 1.5rem;
+      padding: 2rem;
+    }
+    
+    .testimonial-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .testimonial-quote {
+      font-size: 3rem;
+      color: var(--primary-color);
+      opacity: 0.2;
+      position: absolute;
+      top: 10px;
+      left: 20px; /* Change right to left */
+    }
+    
+    .testimonial-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--primary-color);
+    }
+    
+    /* Application Process */
+    .process-step {
+      text-align: center;
+      position: relative;
+      padding-bottom: 2rem;
+    }
+    
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin: 0 auto 1rem;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .process-step::before {
+      content: '';
+      position: absolute;
+      width: 2px;
+      height: 100%;
+      background-color: #e9ecef;
+      top: 0;
+      right: 50%; /* Change left to right */
+      transform: translateX(50%);
+    }
+    
+    .process-step:last-child::before {
+      display: none;
+    }
+    
+    /* Footer */
+    .footer {
+      background-color: var(--dark-color);
+      color: white;
+      padding: 3rem 0 2rem;
+    }
+    
+    .footer h5 {
+      position: relative;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .footer h5::after {
+      content: '';
+      position: absolute;
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      bottom: 0;
+      right: 0; /* Change left to right */
+    }
+    
+    .footer a {
+      color: #a0aec0;
+      text-decoration: none;
+      transition: var(--transition);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    
+    .footer a:hover {
+      color: white;
+      transform: translateX(-5px); /* Change translateX(5px) to translateX(-5px) */
+    }
+    
+    .copyright {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+      .category-card, .program-card {
+        margin-bottom: 1.5rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .header-section {
+        padding: 2rem 0;
+      }
+      
+      .footer h5 {
+        margin-top: 1.5rem;
+      }
+      
+      .process-step::before {
+        right: 25px; /* Change left to right */
+        top: 50px;
+        height: calc(100% - 50px);
+      }
+      
+      .step-number {
+        margin: 0 0 1rem 0;
+      }
+      
+      .process-step {
+        text-align: right; /* Change text-align: left to text-align: right */
+        padding-right: 70px; /* Change padding-left to padding-right */
+      }
+    }
+
+    
+.accordion-button:not(.collapsed) {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.accordion-item {
+  margin-bottom: 1rem;
+  border-radius: 8px !important;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,.125);
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+}
+
+.accordion-body {
+  background-color: #f8f9fa;
+}
+
+.accordion-body ul {
+  padding-left: 1.5rem; /* Change padding-right to padding-left */
+  margin-bottom: 0;
+}
+
+/* RTL support for Arabic text */
+.accordion-button::after {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] .accordion-button::after {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+    </style>
+
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">بوابة جامعة القاهرة</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+        
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">الرئيسية</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('programs') }}">البرامج</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">المشاريع</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('news') }}">الإعلانات</a></li>
+       
+        </ul>
+        <button class="btn btn-login ms-3" onclick="window.location.href='{{ url_for('login') }}'">تسجيل الدخول</button>
+        <button class="btn btn-apply btn-primary ms-2" onclick="window.location.href='{{ url_for('register') }}'">قدم الآن</button>
+      </div>
+    </div>
+  </nav>
+
+
+    <!-- Header Section -->
+    <section class="header-section">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="display-4 fw-bold mb-3">مستودع المشاريع</h1>
+                <p class="lead mb-4">اكتشف المشاريع البحثية المبتكرة وإنجازات الطلاب</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Navigation -->
+    <section class="categories-nav py-4" dir="rtl">
+        <div class="container">
+            <div class="d-flex justify-content-center flex-wrap gap-3">
+                <button class="btn btn-primary category-btn active" data-category="all">جميع المشاريع</button>
+                {% for category in categories %}
+                <button class="btn btn-outline-primary category-btn" 
+                        data-category="{{ category }}">{{ category }}</button>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="projects-section py-5" dir="rtl">
+        <div class="container">
+            <div class="row g-4" id="projectsContainer">
+                {% for project in projects %}
+                <div class="col-lg-4 col-md-6 project-item" data-category="{{ project.category }}">
+                    <div class="project-card h-100">
+                        <div class="project-img-container" style="width: 100%; height: 200px; overflow: hidden;">
+                            {% if project.image_path %}
+                            <img src="{{ url_for('static', filename=project.image_path) }}" 
+                                 class="project-img" 
+                                 alt="{{ project.title }}"
+                                 style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <img src="{{ url_for('static', filename='img/default-project.jpg') }}" 
+                                 class="project-img" 
+                                 alt="Default Project Image"
+                                 style="width: 100%; height: 100%; object-fit: cover;">
+                            {% endif %}
+                            {% if project.is_popular %}
+                            <span class="badge bg-primary position-absolute top-0 start-0 m-2">مميز</span>
+                            {% endif %}
+                        </div>
+                        <div class="card-body p-4">
+                            <h5 class="project-title">{{ project.title }}</h5>
+                            <p class="card-text">{{ project.description[:150] }}{% if project.description|length > 150 %}...{% endif %}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="badge bg-light text-dark">{{ project.category }}</span>
+                                {% if project.url %}
+                                <a href="{{ project.url }}" class="btn btn-primary project-btn" target="_blank">عرض المشروع</a>
+                                {% else %}
+                                <a href="{{ url_for('projects') }}" class="btn btn-primary project-btn">التفاصيل</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <h5>كلية الدراسات العليا للبحوث الإحصائية</h5>
+                    <p>تقديم تعليم عالي الجودة في مجال الإحصاء وعلوم الحاسب منذ أكثر من 70 عاماً.</p>
+                </div>
+                <div class="col-lg-2">
+                    <h5>البرامج</h5>
+                    <a href="#">المرحلة الجامعية</a>
+                    <a href="#">الدراسات العليا</a>
+                    <a href="#">البرامج المهنية</a>
+                    <a href="#">الدورات عبر الإنترنت</a>
+                </div>
+                <div class="col-lg-2">
+                    <h5>الموارد</h5>
+                    <a href="#">المكتبة</a>
+                    <a href="#">البحث العلمي</a>
+                    <a href="#">المنشورات</a>
+                    <a href="#">خدمات التوظيف</a>
+                </div>
+                <div class="col-lg-4">
+                    <h5>اتصل بنا</h5>
+                    <p>جامعة القاهرة، الجيزة، مصر<br>
+                    الهاتف: +20 2 35676105<br>
+                    البريد الإلكتروني: info@cu.edu.eg</p>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center copyright">
+                <p>&copy; {{ now.year }} كلية الدراسات العليا للبحوث الإحصائية. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            const projectItems = document.querySelectorAll('.project-item');
+            const searchInput = document.getElementById('searchInput');
+
+            // Category filter functionality
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    button.classList.add('active');
+
+                    const selectedCategory = button.dataset.category;
+
+                    projectItems.forEach(item => {
+                        if (selectedCategory === 'all' || item.dataset.category === selectedCategory) {
+                            item.style.display = 'block';
+                            // Add animation class
+                            item.classList.add('fade-in');
+                        } else {
+                            item.style.display = 'none';
+                            item.classList.remove('fade-in');
+                        }
+                    });
+                });
+            });
+
+            // Search functionality
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    projectItems.forEach(item => {
+                        const title = item.querySelector('.project-title').textContent.toLowerCase();
+                        const description = item.querySelector('.card-text').textContent.toLowerCase();
+                        const category = item.dataset.category.toLowerCase();
+                        
+                        if (title.includes(searchTerm) || 
+                            description.includes(searchTerm) || 
+                            category.includes(searchTerm)) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

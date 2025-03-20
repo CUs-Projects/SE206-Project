@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Login - University Portal{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>تسجيل الدخول</h2>
+        <form method="POST" action="{{ url_for('login') }}">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                <label for="email">البريد الإلكتروني</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">دخول</button>
+        </form>
+        <p class="mt-3 text-center">
+            ليس لديك حساب؟ <a href="{{ url_for('register') }}">سجل هنا</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

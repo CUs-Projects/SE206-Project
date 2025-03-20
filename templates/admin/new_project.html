@@ -1,0 +1,90 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}Add New Project{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header">
+        <h3>Add New Project</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin_new_project') }}" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
+            <div class="mb-3">
+                <label for="title" class="form-label">Project Title</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" name="category" required>
+                    <option value="">Select Category</option>
+                    <option value="Research">Research</option>
+                    <option value="Development">Development</option>
+                    <option value="Analysis">Analysis</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Project Image</label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+            </div>
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="is_active" name="is_active">
+                <label class="form-check-label" for="is_active">Active</label>
+            </div>
+
+            <div class="mb-3 form-check"></div>
+                <input type="checkbox" class="form-check-input" id="is_popular" name="is_popular">
+                <label class="form-check-label" for="is_popular">Popular</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <a href="{{ url_for('admin_projects') }}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    const fileInput = document.getElementById('image');
+    if (fileInput.files.length > 0) {
+        const fileSize = fileInput.files[0].size / 1024 / 1024; // Convert to MB
+        if (fileSize > 2) {
+            e.preventDefault();
+            alert('Image file size must be less than 2MB');
+        }
+    }
+});
+
+document.getElementById('image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        const preview = document.createElement('div');
+        preview.className = 'image-preview';
+        preview.style = 'width: 200px; height: 120px; overflow: hidden; margin-top: 10px;';
+        
+        const img = document.createElement('img');
+        img.style = 'width: 100%; height: 100%; object-fit: cover;';
+        
+        reader.onload = function(e) {
+            img.src = e.target.result;
+            preview.appendChild(img);
+            const oldPreview = document.querySelector('.image-preview');
+            if (oldPreview) oldPreview.remove();
+            e.target.parentElement.appendChild(preview);
+        }
+        
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

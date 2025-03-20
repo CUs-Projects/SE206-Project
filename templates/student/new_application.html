@@ -1,0 +1,179 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}New Application{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header">
+        <h3>Start New Application</h3>
+    </div>
+    
+    <div class="card-body">
+        <!-- Make sure the form includes the CSRF token -->
+        <form method="POST" action="{{ url_for('student_new_application') }}">
+            {{ form.csrf_token }}
+            <div class="mb-3">
+                <label for="program" class="form-label">Program</label>
+                <select class="form-select" id="program" name="program" required>
+                    <option value="">Select a program</option>
+                    
+                    <optgroup label="Diploma Programs">
+                        <option value="Diploma in Project Management">Project Management (إدارة المشروعات)</option>
+                        <option value="Diploma in Operations Research and Decision Support">Operations Research and Decision Support (بحوث العمليات ودعم القرار)</option>
+                        <option value="Diploma in Supply Chain and Operations Management">Supply Chain and Operations Management (سلسلة الإمداد وإدارة العمليات)</option>
+                        <option value="Diploma in Web Design">Web Design (تصميم المواقع)</option>
+                        <option value="Diploma in Software Engineering">Software Engineering (هندسة البرمجيات)</option>
+                        <option value="Diploma in Population Policies & Data Analysis">Population Policies & Data Analysis (السياسات السكانية وتحليل بياناتها)</option>
+                        <option value="Diploma in Applied Statistics">Applied Statistics (الإحصاءات التطبيقية)</option>
+                        <option value="Diploma in Modern Management for Human Resources">Modern Management for Human Resources (الإدارة الحديثة للموارد البشرية)</option>
+                        <option value="Diploma in Econometric Analysis of Time Series">Econometric Analysis of Time Series (التحليل القياسي للسلاسل الزمنية)</option>
+                        <option value="Diploma in Statistical Computing">Statistical Computing (الحسابات الإحصائية)</option>
+                        <option value="Diploma in Statistical Quality Control & Quality Assurance">Statistical Quality Control & Quality Assurance (الضبط الإحصائي وتوكيد الجودة)</option>
+                        <option value="Diploma in Risk and Crisis Management">Risk and Crisis Management (إدارة المخاطر والأزمات)</option>
+                        <option value="Diploma in Surveys and Reporting">Surveys and Reporting (المسوح وإعداد تقاريرها)</option>
+                        <option value="Diploma in Data Analysis">Data Analysis (تحليل البيانات)</option>
+                        <option value="Diploma in Life Testing and Reliability Analysis">Life Testing and Reliability Analysis (اختبارات الحياة وتحليل الصلاحية)</option>
+                        <option value="Diploma in Measuring Public Opinion Polls">Measuring Public Opinion Polls (قياس استطلاعات الرأى العام)</option>
+                        <option value="Diploma in Statistical Research and Development">Statistical Research and Development (البحوث الإحصائية والتطوير)</option>
+                        <option value="Diploma in Human Development & Resources">Human Development & Resources (التنمية البشرية ومواردها)</option>
+                    </optgroup>
+                    
+                    <optgroup label="Master's Programs">
+                        <option value="Master in Project Management">Project Management (إدارة المشروعات)</option>
+                        <option value="Master in Operations Research and Decision Support">Operations Research and Decision Support (بحوث العمليات ودعم القرار)</option>
+                        <option value="Master in Supply Chain and Operations Management">Supply Chain and Operations Management (سلسلة الإمداد وإدارة العمليات)</option>
+                        <option value="Master in Web Design">Web Design (تصميم المواقع)</option>
+                        <option value="Master in Software Engineering">Software Engineering (هندسة البرمجيات)</option>
+                        <option value="Master in Applied Statistics">Applied Statistics (الإحصاءات التطبيقية)</option>
+                        <option value="Master in Modern Management for Human Resources">Modern Management for Human Resources (الإدارة الحديثة للموارد البشرية)</option>
+                        <option value="Master in Econometric Analysis of Time Series">Econometric Analysis of Time Series (التحليل القياسي للسلاسل الزمنية)</option>
+                        <option value="Master in Statistical Computing">Statistical Computing (الحسابات الإحصائية)</option>
+                        <option value="Master in Statistical Quality Control & Quality Assurance">Statistical Quality Control & Quality Assurance (الضبط الإحصائي وتوكيد الجودة)</option>
+                        <option value="Master in Risk and Crisis Management">Risk and Crisis Management (إدارة المخاطر والأزمات)</option>
+                        <option value="Master in Data Analysis">Data Analysis (تحليل البيانات)</option>
+                        <option value="Master in Statistical Research and Development">Statistical Research and Development (البحوث الإحصائية والتطوير)</option>
+                    </optgroup>
+                    
+                    <optgroup label="Doctorate Programs">
+                        <option value="PhD in Project Management">Project Management (إدارة المشروعات)</option>
+                        <option value="PhD in Operations Research and Decision Support">Operations Research and Decision Support (بحوث العمليات ودعم القرار)</option>
+                        <option value="PhD in Supply Chain and Operations Management">Supply Chain and Operations Management (سلسلة الإمداد وإدارة العمليات)</option>
+                        <option value="PhD in Web Design">Web Design (تصميم المواقع)</option>
+                        <option value="PhD in Software Engineering">Software Engineering (هندسة البرمجيات)</option>
+                        <option value="PhD in Applied Statistics">Applied Statistics (الإحصاءات التطبيقية)</option>
+                        <option value="PhD in Modern Management for Human Resources">Modern Management for Human Resources (الإدارة الحديثة للموارد البشرية)</option>
+                        <option value="PhD in Statistical Computing">Statistical Computing (الحسابات الإحصائية)</option>
+                        <option value="PhD in Statistical Quality Control & Quality Assurance">Statistical Quality Control & Quality Assurance (الضبط الإحصائي وتوكيد الجودة)</option>
+                        <option value="PhD in Risk and Crisis Management">Risk and Crisis Management (إدارة المخاطر والأزمات)</option>
+                        <option value="PhD in Data Analysis">Data Analysis (تحليل البيانات)</option>
+                    </optgroup>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Application</button>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-6">
+    <div class="card-header">
+        <h3>Program Information</h3>
+    </div>
+    
+    <div class="card-body">
+        <div id="program-details">
+            <p class="text-muted text-center">Please select a program above to see its details.</p>
+        </div>
+        
+        <div id="mba-details" class="program-info hidden">
+            <h4>Master of Business Administration</h4>
+            <p class="mb-4">The MBA program is designed to develop the skills required for careers in business and management.</p>
+            
+            <div class="info-row">
+                <span class="info-label">Duration:</span>
+                <span class="info-value">2 years (full-time), 3 years (part-time)</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Credits:</span>
+                <span class="info-value">60 credit hours</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Tuition:</span>
+                <span class="info-value">80,000 EGP (Egyptian), 120,000 EGP (International)</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Requirements:</span>
+                <span class="info-value">Bachelor's degree with GPA of at least 2.75</span>
+            </div>
+        </div>
+        
+        <div id="mscs-details" class="program-info hidden">
+            <h4>Master of Science in Computer Science</h4>
+            <p class="mb-4">The MSCS program provides advanced knowledge in computer science and prepares students for research and development careers.</p>
+            
+            <div class="info-row">
+                <span class="info-label">Duration:</span>
+                <span class="info-value">2 years (full-time), 3 years (part-time)</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Credits:</span>
+                <span class="info-value">36 credit hours</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Tuition:</span>
+                <span class="info-value">70,000 EGP (Egyptian), 110,000 EGP (International)</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Requirements:</span>
+                <span class="info-value">Bachelor's degree in Computer Science or related field with GPA of at least 3.0</span>
+            </div>
+        </div>
+        
+        <!-- Additional program details would go here -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Update the JavaScript to handle the new program values
+    document.getElementById('program').addEventListener('change', function() {
+        const programValue = this.value;
+        const programDetails = document.getElementById('program-details');
+        const programInfos = document.querySelectorAll('.program-info');
+        
+        // Hide all program info sections
+        programInfos.forEach(info => {
+            info.classList.add('hidden');
+        });
+        
+        // Show default message when no program is selected
+        if (!programValue) {
+            programDetails.classList.remove('hidden');
+            return;
+        }
+        
+        // Hide default message
+        programDetails.classList.add('hidden');
+        
+        // Extract the program name without the degree level
+        const programName = programValue.split(' in ')[1];
+        
+        // Show selected program details based on program name
+        // You'll need to create these divs with proper IDs for each program
+        const programId = programName.toLowerCase().replace(/\s+/g, '-');
+        const programElement = document.getElementById(`${programId}-details`);
+        
+        if (programElement) {
+            programElement.classList.remove('hidden');
+        } else {
+            // If no specific details available, show generic info
+            programDetails.classList.remove('hidden');
+            programDetails.innerHTML = `
+                <h4>${programValue}</h4>
+                <p>For detailed information about this program, please contact the faculty office.</p>
+            `;
+        }
+    });
+</script>
+{% endblock %}

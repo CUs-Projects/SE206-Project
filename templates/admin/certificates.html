@@ -1,0 +1,374 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}Certificate Requests{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header-with-actions">
+        <h3>Certificate Request Management</h3>
+        <div class="header-actions">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search certificates..." class="form-input">
+            </div>
+            <select id="status-filter" class="form-input">
+                <option value="">All Statuses</option>
+                <option value="Pending Payment">Pending Payment</option>
+                <option value="Processing">Processing</option>
+                <option value="Ready for Pickup">Ready for Pickup</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="full-width-table">
+            <thead>
+                <tr>
+                    <th>Certificate ID</th>
+                    <th>Student</th>
+                    <th>Student ID</th>
+                    <th>Type</th>
+                    <th>Request Date</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for certificate in certificates %}
+                    <tr>
+                        <td>{{ certificate.cert_id }}</td>
+                        <td>{{ certificate.user.full_name }}</td>
+                        <td>
+                            {% set student_id = namespace(value='N/A') %}
+                            {% for app in certificate.user.applications %}
+                                {% if app.student_id and student_id.value == 'N/A' %}
+                                    {% set student_id.value = app.student_id.student_id %}
+                                {% endif %}
+                            {% endfor %}
+                            {{ student_id.value }}
+                        </td>
+                        <td>{{ certificate.type }}</td>
+                        <td>{{ certificate.request_date.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            <span class="status-badge 
+                                {% if certificate.status == 'Pending Payment' %}yellow
+                                {% elif certificate.status == 'Processing' %}blue
+                                {% elif certificate.status == 'Ready for Pickup' %}green
+                                {% endif %}">
+                                {{ certificate.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge 
+                                {% if certificate.payment_status == 'Pending' %}yellow
+                                {% elif certificate.payment_status == 'Paid' %}green
+                                {% endif %}">
+                                {{ certificate.payment_status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if certificate.payment_status == 'Pending' %}
+                                <button class="btn disabled">
+                                    Awaiting Payment
+                                </button>
+                            {% elif certificate.status == 'Processing' %}
+                                <button class="btn primary process-cert-btn" 
+                                    data-id="{{ certificate.id }}"
+                                    data-cert-id="{{ certificate.cert_id }}">
+                                    Mark Ready
+                                </button>
+                            {% elif certificate.status == 'Ready for Pickup' %}
+                                <button class="btn disabled">
+                                    Processed
+                                </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center">No certificate requests found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Certificate Detail Modal -->
+<div id="certificate-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Certificate Details</h3>
+            <button class="close-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div id="certificate-details">
+                <!-- Will be filled by JavaScript -->
+            </div>
+            
+            <div class="form-group mt-4">
+                <label for="certificate-notes">Processing Notes</label>
+                <textarea id="certificate-notes" rows="3" class="form-input" 
+                          placeholder="Add any processing notes or special instructions..."></textarea>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn outline close-modal">Cancel</button>
+            <button id="process-certificate-btn" class="btn primary">Mark as Ready for Pickup</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Highlight certificate row if cert_id parameter is present in URL
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const certId = urlParams.get('cert_id');
+        
+        if (certId) {
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const rowCertId = row.querySelector('td:nth-child(1)')?.textContent;
+                if (rowCertId === certId) {
+                    row.classList.add('highlight-row');
+                    // Scroll to the highlighted row
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        }
+    });
+    
+    // Search functionality
+    document.getElementById('search-input').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            const certificateId = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+            const student = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const studentId = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            const type = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
+            
+            if (certificateId.includes(searchValue) || 
+                student.includes(searchValue) || 
+                studentId.includes(searchValue) || 
+                type.includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+    
+    // Status filter
+    document.getElementById('status-filter').addEventListener('change', function() {
+        const filterValue = this.value;
+        const rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            if (!filterValue) {
+                row.style.display = '';
+                return;
+            }
+            
+            const statusCell = row.querySelector('td:nth-child(6)');
+            if (statusCell) {
+                const status = statusCell.textContent.trim();
+                
+                if (status.includes(filterValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
+    });
+    
+    // Process certificate buttons
+    const processCertBtns = document.querySelectorAll('.process-cert-btn');
+    const certificateModal = document.getElementById('certificate-modal');
+    const closeModalBtns = document.querySelectorAll('.close-modal');
+    
+    // Show certificate modal
+    processCertBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const certId = this.getAttribute('data-id');
+            const row = this.closest('tr');
+            
+            // Get certificate details from the row
+            const certIdText = row.querySelector('td:nth-child(1)').textContent;
+            const student = row.querySelector('td:nth-child(2)').textContent;
+            const studentId = row.querySelector('td:nth-child(3)').textContent;
+            const type = row.querySelector('td:nth-child(4)').textContent;
+            const requestDate = row.querySelector('td:nth-child(5)').textContent;
+            const status = row.querySelector('td:nth-child(6) .status-badge').textContent.trim();
+            const payment = row.querySelector('td:nth-child(7) .status-badge').textContent.trim();
+            
+            // Fill in certificate details
+            document.getElementById('certificate-details').innerHTML = `
+                <div class="info-row">
+                    <span class="info-label">Certificate ID:</span>
+                    <span class="info-value">${certIdText}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Student:</span>
+                    <span class="info-value">${student}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Student ID:</span>
+                    <span class="info-value">${studentId}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Type:</span>
+                    <span class="info-value">${type}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Request Date:</span>
+                    <span class="info-value">${requestDate}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Status:</span>
+                    <span class="status-badge blue">${status}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Payment:</span>
+                    <span class="status-badge green">${payment}</span>
+                </div>
+            `;
+            
+            // Set the cert ID for the process button
+            document.getElementById('process-certificate-btn').setAttribute('data-id', certId);
+            
+            // Show the modal
+            certificateModal.classList.remove('hidden');
+        });
+    });
+    
+    // Close modal
+    closeModalBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            certificateModal.classList.add('hidden');
+        });
+    });
+    
+    // Process certificate from modal
+    document.getElementById('process-certificate-btn').addEventListener('click', function() {
+        const certId = this.getAttribute('data-id');
+        const notes = document.getElementById('certificate-notes').value;
+        
+        const formData = new FormData();
+        formData.append('action', 'process');
+        formData.append('notes', notes);
+        
+        // Add CSRF token if you have it
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        
+        fetch(`/admin/certificates/update/${certId}`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Find and update the certificate row
+                const rows = document.querySelectorAll('tbody tr');
+                let targetRow;
+                
+                rows.forEach(row => {
+                    const rowCertId = row.querySelector('td:nth-child(1)').textContent;
+                    if (rowCertId === data.cert_id) {
+                        targetRow = row;
+                    }
+                });
+                
+                if (targetRow) {
+                    // Update status badge
+                    const statusCell = targetRow.querySelector('td:nth-child(6)');
+                    statusCell.innerHTML = '<span class="status-badge green">Ready for Pickup</span>';
+                    
+                    // Update action button
+                    const actionCell = targetRow.querySelector('td:nth-child(8)');
+                    actionCell.innerHTML = '<button class="btn disabled">Processed</button>';
+                }
+                
+                // Close modal
+                document.getElementById('certificate-modal').classList.add('hidden');
+                
+                // Show success message
+                alert('Certificate marked as ready for pickup successfully!');
+                
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while processing the certificate.');
+        });
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(e) {
+        if (e.target === certificateModal) {
+            certificateModal.classList.add('hidden');
+        }
+    });
+
+    // Remove all existing process certificate button handlers
+    // Add this single handler:
+    document.querySelectorAll('.process-cert-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const certId = this.getAttribute('data-id');
+            
+            if (confirm('Are you sure you want to mark this certificate as ready for pickup?')) {
+                const formData = new FormData();
+                formData.append('action', 'process');
+                
+                fetch(`/admin/certificates/update/${certId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the status badge
+                        const row = this.closest('tr');
+                        const statusCell = row.querySelector('td:nth-child(6)');
+                        statusCell.innerHTML = '<span class="status-badge green">Ready for Pickup</span>';
+                        
+                        // Update the action button
+                        const actionCell = this.parentElement;
+                        actionCell.innerHTML = '<button class="btn disabled">Processed</button>';
+                        
+                        // Show success message
+                        alert('Certificate marked as ready for pickup successfully!');
+                    } else {
+                        alert('Error: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while processing the certificate.');
+                });
+            }
+        });
+    });
+
+    // Remove the duplicate script block at the bottom
+</script>
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}Request Certificate{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header">
+        <h3>Request Certificate</h3>
+    </div>
+    
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('student_request_certificate') }}">
+            {{ form.csrf_token }}
+            <div class="mb-3">
+                <label for="certificate_type" class="form-label">Certificate Type</label>
+                <select class="form-select" id="certificate_type" name="certificate_type" required>
+                    <option value="">Select certificate type</option>
+                    <option value="Transcript">Academic Transcript</option>
+                    <option value="Completion">Certificate of Completion</option>
+                    <option value="Enrollment">Proof of Enrollment</option>
+                    <option value="Graduation">Graduation Certificate</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="purpose" class="form-label">Purpose</label>
+                <textarea class="form-control" id="purpose" name="purpose" rows="3" required></textarea>
+                <div class="form-text">Please explain why you need this certificate.</div>
+            </div>
+            <div class="mb-3">
+                <label for="copies" class="form-label">Number of Copies</label>
+                <input type="number" class="form-control" id="copies" name="copies" min="1" max="10" value="1" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Request</button>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h3>Certificate Information</h3>
+    </div>
+    
+    <div class="card-body">
+        <div id="certificate-details">
+            <p class="text-muted text-center">Please select a certificate type above to see its details.</p>
+        </div>
+        
+        <div id="transcript-details" class="certificate-info hidden">
+            <h4>Academic Transcript</h4>
+            <p class="mb-4">Official document showing your complete academic record including courses, grades, and GPA.</p>
+            
+            <div class="info-row">
+                <span class="info-label">Processing Time:</span>
+                <span class="info-value">3-5 working days</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Fee:</span>
+                <span class="info-value">200 EGP per copy</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Format:</span>
+                <span class="info-value">Official sealed document</span>
+            </div>
+        </div>
+        
+        <div id="completion-details" class="certificate-info hidden">
+            <h4>Certificate of Completion</h4>
+            <p class="mb-4">Confirms successful completion of your degree program or specific courses.</p>
+            
+            <div class="info-row">
+                <span class="info-label">Processing Time:</span>
+                <span class="info-value">5-7 working days</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Fee:</span>
+                <span class="info-value">250 EGP per copy</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Format:</span>
+                <span class="info-value">Official certificate with university seal</span>
+            </div>
+        </div>
+        
+        <div id="enrollment-details" class="certificate-info hidden">
+            <h4>Proof of Enrollment</h4>
+            <p class="mb-4">Confirms your current enrollment status at the university.</p>
+            
+            <div class="info-row">
+                <span class="info-label">Processing Time:</span>
+                <span class="info-value">1-3 working days</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Fee:</span>
+                <span class="info-value">150 EGP per copy</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Format:</span>
+                <span class="info-value">Official letter</span>
+            </div>
+        </div>
+        
+        <div id="graduation-details" class="certificate-info hidden">
+            <h4>Graduation Certificate</h4>
+            <p class="mb-4">Confirms your graduation from the university.</p>
+            
+            <div class="info-row">
+                <span class="info-label">Processing Time:</span>
+                <span class="info-value">5-7 working days</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Fee:</span>
+                <span class="info-value">300 EGP per copy</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Format:</span>
+                <span class="info-value">Official certificate with university seal</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Show certificate details based on selection
+    document.getElementById('certificate_type').addEventListener('change', function() {
+        const certificateValue = this.value.toLowerCase();
+        const certificateDetails = document.getElementById('certificate-details');
+        const certificateInfos = document.querySelectorAll('.certificate-info');
+        
+        // Hide all certificate info sections
+        certificateInfos.forEach(info => {
+            info.classList.add('hidden');
+        });
+        
+        // Show selected certificate info
+        if (certificateValue) {
+            const selectedInfo = document.getElementById(certificateValue + '-details');
+            if (selectedInfo) {
+                selectedInfo.classList.remove('hidden');
+            }
+        }
+    });
+</script>
+{% endblock %}

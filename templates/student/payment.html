@@ -1,0 +1,45 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}Application Payment{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header">
+        <h3>Application Payment</h3>
+    </div>
+    
+    <div class="card-body">
+        <div class="payment-details">
+            <div class="info-group">
+                <label>Application ID:</label>
+                <span>{{ application.app_id }}</span>
+            </div>
+            
+            <div class="info-group">
+                <label>Program:</label>
+                <span>{{ application.program }}</span>
+            </div>
+            
+            <div class="info-group">
+                <label>Total Fee:</label>
+                <span class="fee-amount">{{ fee }} EGP</span>
+            </div>
+        </div>
+
+        <form method="POST" class="payment-form">
+            <!-- Add CSRF Token -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
+            <div class="alert info">
+                <i class="fas fa-info-circle"></i>
+                <p>This is a simulation of the payment process. In a real application, this would connect to a payment gateway.</p>
+            </div>
+
+            <button type="submit" class="btn success btn-block">
+                <i class="fas fa-check-circle"></i>
+                Confirm Payment
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}Create Support Ticket{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header">
+        <h3>Create New Support Ticket</h3>
+    </div>
+    
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('student_new_ticket') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" name="subject" class="form-input" required
+                       placeholder="Brief description of your issue...">
+            </div>
+            
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" name="category" class="form-input" required>
+                    <option value="">Select a category</option>
+                    <option value="Application">Application Process</option>
+                    <option value="Documents">Document Upload Issues</option>
+                    <option value="Payment">Payment Problems</option>
+                    <option value="Certificate">Certificate Requests</option>
+                    <option value="ID">Student ID Issues</option>
+                    <option value="Technical">Technical Problems</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="priority">Priority</label>
+                <select id="priority" name="priority" class="form-input">
+                    <option value="Normal">Normal</option>
+                    <option value="High">High</option>
+                    <option value="Urgent">Urgent</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="6" class="form-input" required
+                          placeholder="Please describe your issue in detail..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="related_application">Related Application (Optional)</label>
+                <select id="related_application" name="related_application" class="form-input">
+                    <option value="">Not related to a specific application</option>
+                    {% for application in current_user.applications %}
+                        <option value="{{ application.id }}">{{ application.app_id }} - {{ application.program }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <a href="{{ url_for('student_support') }}" class="btn outline">Cancel</a>
+                <button type="submit" class="btn primary">Submit Ticket</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-6">
+    <div class="card-header">
+        <h3>Support Information</h3>
+    </div>
+    
+    <div class="card-body">
+        <h4 class="mb-4">Before Submitting a Ticket</h4>
+        <p>Here are some steps that might help you solve common issues:</p>
+        
+        <ul class="mb-4 ml-6" style="list-style-type: disc;">
+            <li class="mb-2">Check our <a href="#" class="btn-link">FAQ section</a> for answers to common questions.</li>
+            <li class="mb-2">Make sure all documents are uploaded in the correct format (PDF, JPG, or PNG).</li>
+            <li class="mb-2">Ensure that your payment details were entered correctly.</li>
+            <li>Try refreshing the page or using a different browser if experiencing technical issues.</li>
+        </ul>
+        
+        <p>Our support team aims to respond to all tickets within 24 hours during business days.</p>
+    </div>
+</div>
+{% endblock %}

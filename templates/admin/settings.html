@@ -1,0 +1,120 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}System Settings{% endblock %}
+
+{% block main_content %}
+<div class="card mb-6">
+    <div class="card-header">
+        <h3>Fee Settings</h3>
+    </div>
+    
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin_settings') }}">
+            <div class="form-group">
+                <label for="local_fee">Local Student Fee (EGP)</label>
+                <input type="number" id="local_fee" name="local_fee" value="{{ settings.local_fee }}" required class="form-input">
+                <p class="text-muted">Fee for Egyptian students</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="international_fee">International Student Fee (EGP)</label>
+                <input type="number" id="international_fee" name="international_fee" value="{{ settings.international_fee }}" required class="form-input">
+                <p class="text-muted">Fee for international students</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="certificate_fee">Certificate Request Fee (EGP)</label>
+                <input type="number" id="certificate_fee" name="certificate_fee" value="{{ settings.certificate_fee }}" required class="form-input">
+                <p class="text-muted">Fee for certificate requests</p>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" name="fee_settings" class="btn primary">Save Fee Settings</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mb-6">
+    <div class="card-header">
+        <h3>Notification Settings</h3>
+    </div>
+    
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin_settings') }}">
+            <div class="settings-options">
+                <div class="toggle-setting">
+                    <span>Email notifications</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="email_notifications" name="email_notifications" 
+                               class="toggle-checkbox" {% if settings.email_notifications %}checked{% endif %}>
+                        <label for="email_notifications" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div class="toggle-setting">
+                    <span>SMS notifications</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="sms_notifications" name="sms_notifications" 
+                               class="toggle-checkbox" {% if settings.sms_notifications %}checked{% endif %}>
+                        <label for="sms_notifications" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div class="toggle-setting">
+                    <span>Push notifications</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="push_notifications" name="push_notifications" 
+                               class="toggle-checkbox" {% if settings.push_notifications %}checked{% endif %}>
+                        <label for="push_notifications" class="toggle-label"></label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" name="notification_settings" class="btn primary">Save Notification Settings</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>System Maintenance</h3>
+    </div>
+    
+    <div class="card-body">
+        <div class="form-group">
+            <button id="backup-btn" class="btn primary">Backup Database</button>
+            <p class="text-muted mt-3">Create a backup of the system database.</p>
+        </div>
+        
+        <div class="form-group">
+            <button id="clear-notifications-btn" class="btn outline">Clear All Notifications</button>
+            <p class="text-muted mt-3">Remove all read notifications from the system.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Backup Database
+    document.getElementById('backup-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        // In a real app, this would trigger a database backup
+        alert('Database backup created successfully!');
+    });
+    
+    // Clear Notifications
+    document.getElementById('clear-notifications-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        if (confirm('Are you sure you want to clear all read notifications? This action cannot be undone.')) {
+            // In a real app, this would call an API endpoint to clear notifications
+            alert('All read notifications have been cleared.');
+        }
+    });
+</script>
+{% endblock %}

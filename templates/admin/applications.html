@@ -1,0 +1,349 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}Applications{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header-with-actions">
+        <h3>Application Management</h3>
+        <div class="header-actions">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search applications..." class="form-input">
+            </div>
+            <select id="status-filter" class="form-input">
+                <option value="">All Statuses</option>
+                <option value="Pending Review">Pending Review</option>
+                <option value="Documents Approved">Documents Approved</option>
+                <option value="Documents Rejected">Documents Rejected</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="full-width-table">
+            <thead>
+                <tr>
+                    <th>Application ID</th>
+                    <th>Applicant</th>
+                    <th>Program</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                    <tr>
+                        <td>{{ application.app_id }}</td>
+                        <td>{{ application.user.full_name }}</td>
+                        <td>{{ application.program }}</td>
+                        <td>{{ application.date_submitted.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            <span class="status-badge 
+                                {% if application.status == 'Pending Review' %}yellow
+                                {% elif application.status == 'Documents Approved' %}green
+                                {% elif application.status == 'Documents Rejected' %}red
+                                {% endif %}">
+                                {{ application.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge 
+                                {% if application.payment_status == 'Pending' %}yellow
+                                {% elif application.payment_status == 'Paid' %}green
+                                {% endif %}">
+                                {{ application.payment_status }}
+                            </span>
+                        </td>
+                        <td class="actions-cell">
+                            <button class="action-btn admin-action-btn" data-action="view" data-id="{{ application.id }}">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            
+                            {% if application.status == 'Pending Review' %}
+                                <button class="action-btn approve admin-action-btn" data-action="approve" data-id="{{ application.id }}" onclick="handleAction(event, 'approve', {{ application.id }})">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="action-btn reject admin-action-btn" data-action="reject" data-id="{{ application.id }}" onclick="handleAction(event, 'reject', {{ application.id }})">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">No applications found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Application Detail Modal -->
+<div id="application-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Application Details</h3>
+            <button class="close-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div id="application-details">
+                <!-- Will be filled by JavaScript -->
+            </div>
+            
+            <h4 class="mt-4">Documents</h4>
+            <div id="document-list" class="mt-3">
+                <!-- Will be filled by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn outline close-modal">Close</button>
+            <div id="modal-actions">
+                <!-- Will be filled by JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Add this in the scripts block, before the existing event listeners
+    function handleAction(event, action, appId) {
+        event.preventDefault();
+        
+        if (confirm(`Are you sure you want to ${action} this application?`)) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            fetch(`/admin/application/${appId}/${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    alert(`Application ${action}ed successfully`);
+                    // Reload the page to show updated status
+                    location.reload();
+                } else {
+                    alert('Error processing application');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while processing the request');
+            });
+        }
+    }
+
+    // Add CSRF token to all fetch requests
+    document.addEventListener('DOMContentLoaded', function() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
+        document.querySelectorAll('.admin-action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const action = this.getAttribute('data-action');
+                if (action === 'view') return; // Skip view buttons
+                
+                const appId = this.getAttribute('data-id');
+                handleAction(e, action, appId);
+            });
+        });
+    });
+
+    // Search functionality
+    document.getElementById('search-input').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            const applicant = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const applicationId = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+            const program = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            
+            if (applicant.includes(searchValue) || applicationId.includes(searchValue) || program.includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+    
+    // Status filter
+    document.getElementById('status-filter').addEventListener('change', function() {
+        const filterValue = this.value;
+        const rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            if (!filterValue) {
+                row.style.display = '';
+                return;
+            }
+            
+            const status = row.querySelector('td:nth-child(5) .status-badge').textContent.trim();
+            
+            if (status === filterValue) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+    
+    // View application details
+    const viewButtons = document.querySelectorAll('[data-action="view"]');
+    const modal = document.getElementById('application-modal');
+    const closeButtons = document.querySelectorAll('.close-modal');
+    const applicationDetails = document.getElementById('application-details');
+    const documentList = document.getElementById('document-list');
+    const modalActions = document.getElementById('modal-actions');
+    
+    viewButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const appId = this.getAttribute('data-id');
+            
+            // In a real app, you would fetch application details via AJAX
+            // For now, we'll simulate it with the data already on the page
+            const row = this.closest('tr');
+            const applicationId = row.querySelector('td:nth-child(1)').textContent;
+            const applicant = row.querySelector('td:nth-child(2)').textContent;
+            const program = row.querySelector('td:nth-child(3)').textContent;
+            const date = row.querySelector('td:nth-child(4)').textContent;
+            const status = row.querySelector('td:nth-child(5) .status-badge').textContent.trim();
+            const payment = row.querySelector('td:nth-child(6) .status-badge').textContent.trim();
+            
+            // Display application details
+            applicationDetails.innerHTML = `
+                <div class="info-row">
+                    <span class="info-label">Application ID:</span>
+                    <span class="info-value">${applicationId}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Applicant:</span>
+                    <span class="info-value">${applicant}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Program:</span>
+                    <span class="info-value">${program}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Date Submitted:</span>
+                    <span class="info-value">${date}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Status:</span>
+                    <span class="status-badge ${
+                        status === 'Pending Review' ? 'yellow' : 
+                        status === 'Documents Approved' ? 'green' : 
+                        'red'
+                    }">${status}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Payment:</span>
+                    <span class="status-badge ${payment === 'Paid' ? 'green' : 'yellow'}">${payment}</span>
+                </div>
+            `;
+            
+            // Simulate document list
+            documentList.innerHTML = `
+                <ul class="document-list">
+                    <li class="document-item">
+                        <span>Bachelor Degree Certificate</span>
+                        <span class="status-badge ${status === 'Documents Approved' ? 'green' : status === 'Documents Rejected' ? 'red' : 'blue'}">
+                            ${status === 'Documents Approved' ? 'Verified' : status === 'Documents Rejected' ? 'Rejected' : 'Uploaded'}
+                        </span>
+                    </li>
+                    <li class="document-item">
+                        <span>Transcript</span>
+                        <span class="status-badge ${status === 'Documents Approved' ? 'green' : status === 'Documents Rejected' ? 'red' : 'blue'}">
+                            ${status === 'Documents Approved' ? 'Verified' : status === 'Documents Rejected' ? 'Rejected' : 'Uploaded'}
+                        </span>
+                    </li>
+                    <li class="document-item">
+                        <span>ID Copy</span>
+                        <span class="status-badge ${status === 'Documents Approved' ? 'green' : status === 'Documents Rejected' ? 'red' : 'blue'}">
+                            ${status === 'Documents Approved' ? 'Verified' : status === 'Documents Rejected' ? 'Rejected' : 'Uploaded'}
+                        </span>
+                    </li>
+                </ul>
+            `;
+            
+            // Set modal actions based on application status
+            if (status === 'Pending Review') {
+                modalActions.innerHTML = `
+                    <button class="btn success admin-action-btn" data-action="approve" data-id="${appId}">Approve Documents</button>
+                    <button class="btn danger admin-action-btn" data-action="reject" data-id="${appId}">Reject Documents</button>
+                `;
+            } else {
+                modalActions.innerHTML = '';
+            }
+            
+            // Show modal
+            modal.classList.remove('hidden');
+        });
+    });
+    
+    // Close modal
+    closeButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            modal.classList.add('hidden');
+        });
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+        }
+    });
+
+    // Handle approve/reject actions
+    document.querySelectorAll('.admin-action-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const action = this.getAttribute('data-action');
+            const appId = this.getAttribute('data-id');
+            
+            if (action === 'view') return; // Skip view buttons
+            
+            if (confirm(`Are you sure you want to ${action} this application?`)) {
+                fetch(`/admin/application/${appId}/${action}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Reload the page to show updated status
+                        location.reload();
+                    } else {
+                        alert('Error processing application');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while processing the request');
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

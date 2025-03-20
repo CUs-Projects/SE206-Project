@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>برامج جامعة القاهرة الأكاديمية</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #0D1D4E;
+      --secondary-color: #433AC8;
+      --dark-color: #1a1a1a;
+      --light-color: #f8f9fa;
+      --transition: all 0.3s ease;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+      text-align: right; /* Align text to the right */
+    }
+    
+    /* Navbar Styles */
+    .navbar {
+      background-color: var(--primary-color);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 0.8rem 1rem;
+    }
+    
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white !important;
+    }
+    
+    .nav-link {
+      color: white !important;
+      margin: 0 0.3rem;
+      font-weight: 500;
+      position: relative;
+      padding: 0.5rem 0.8rem !important;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      right: 0; /* Change left to right */
+      background-color: white;
+      transition: var(--transition);
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    .btn-login {
+      background-color: transparent;
+      border: 1px solid white;
+      color: white !important;
+      transition: var(--transition);
+    }
+    
+    .btn-login:hover {
+      background-color: white;
+      color: var(--primary-color) !important;
+    }
+    
+    .btn-apply {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11);
+    }
+    
+    .btn-apply:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1);
+    }
+    
+    /* Header Section */
+    .header-section {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 3rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header-section::after {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      right: -50%; /* Change left to right */
+      background: radial-gradient(rgba(255, 255, 255, 0.1), transparent);
+      z-index: 1;
+    }
+    
+    .header-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+    
+    /* Program Categories */
+    .category-card {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      border: none;
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    
+    .category-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .category-img {
+      height: 180px;
+      object-fit: cover;
+    }
+    
+    .category-overlay {
+      position: absolute;
+      top: 0;
+      right: 0; /* Change left to right */
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+      display: flex;
+      align-items: flex-end;
+    }
+    
+    .category-content {
+      padding: 1.5rem;
+      color: white;
+      width: 100%;
+    }
+    
+    .category-icon {
+      width: 50px;
+      height: 50px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    
+    /* Program Cards */
+    .program-card {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      border: none;
+      margin-bottom: 1.5rem;
+    }
+    
+    .program-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .program-img {
+      height: 200px;
+      object-fit: cover;
+    }
+    
+    .program-tag {
+      position: absolute;
+      top: 10px;
+      left: 10px; /* Change right to left */
+      z-index: 2;
+    }
+    
+    .program-details {
+      padding: 0.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f5f5f5;
+      font-size: 0.9rem;
+    }
+    
+    .program-details span {
+      display: flex;
+      align-items: center;
+    }
+    
+    .program-details i {
+      margin-left: 5px; /* Change margin-right to margin-left */
+      color: var(--primary-color);
+    }
+    
+    .program-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--dark-color);
+    }
+    
+    /* FAQ Section */
+    .faq-item {
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .faq-header {
+      padding: 1rem;
+      background-color: #f5f5f5;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .faq-header:hover {
+      background-color: #e9ecef;
+    }
+    
+    .faq-header h5 {
+      margin: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .faq-icon {
+      transition: var(--transition);
+    }
+    
+    .faq-body {
+      padding: 1rem;
+      display: none;
+    }
+    
+    .faq-header.active .faq-icon {
+      transform: rotate(180deg);
+    }
+    
+    .faq-header.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    /* Testimonials */
+    .testimonial-section {
+      background-color: #f5f5f5;
+    }
+    
+    .testimonial-card {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      border: none;
+      margin-bottom: 1.5rem;
+      padding: 2rem;
+    }
+    
+    .testimonial-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .testimonial-quote {
+      font-size: 3rem;
+      color: var(--primary-color);
+      opacity: 0.2;
+      position: absolute;
+      top: 10px;
+      left: 20px; /* Change right to left */
+    }
+    
+    .testimonial-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--primary-color);
+    }
+    
+    /* Application Process */
+    .process-step {
+      text-align: center;
+      position: relative;
+      padding-bottom: 2rem;
+    }
+    
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin: 0 auto 1rem;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .process-step::before {
+      content: '';
+      position: absolute;
+      width: 2px;
+      height: 100%;
+      background-color: #e9ecef;
+      top: 0;
+      right: 50%; /* Change left to right */
+      transform: translateX(50%);
+    }
+    
+    .process-step:last-child::before {
+      display: none;
+    }
+    
+    /* Footer */
+    .footer {
+      background-color: var(--dark-color);
+      color: white;
+      padding: 3rem 0 2rem;
+    }
+    
+    .footer h5 {
+      position: relative;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .footer h5::after {
+      content: '';
+      position: absolute;
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      bottom: 0;
+      right: 0; /* Change left to right */
+    }
+    
+    .footer a {
+      color: #a0aec0;
+      text-decoration: none;
+      transition: var(--transition);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    
+    .footer a:hover {
+      color: white;
+      transform: translateX(-5px); /* Change translateX(5px) to translateX(-5px) */
+    }
+    
+    .copyright {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+      .category-card, .program-card {
+        margin-bottom: 1.5rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .header-section {
+        padding: 2rem 0;
+      }
+      
+      .footer h5 {
+        margin-top: 1.5rem;
+      }
+      
+      .process-step::before {
+        right: 25px; /* Change left to right */
+        top: 50px;
+        height: calc(100% - 50px);
+      }
+      
+      .step-number {
+        margin: 0 0 1rem 0;
+      }
+      
+      .process-step {
+        text-align: right; /* Change text-align: left to text-align: right */
+        padding-right: 70px; /* Change padding-left to padding-right */
+      }
+    }
+
+    
+.accordion-button:not(.collapsed) {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.accordion-item {
+  margin-bottom: 1rem;
+  border-radius: 8px !important;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,.125);
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+}
+
+.accordion-body {
+  background-color: #f8f9fa;
+}
+
+.accordion-body ul {
+  padding-left: 1.5rem; /* Change padding-right to padding-left */
+  margin-bottom: 0;
+}
+
+/* RTL support for Arabic text */
+.accordion-button::after {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] .accordion-button::after {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+    </style>
+
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">بوابة جامعة القاهرة</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+        
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">الرئيسية</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('programs') }}">البرامج</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">المشاريع</a></li>
+            <li class="nav-item"><a class="nav-link" href="#announcements">الإعلانات</a></li>
+       
+        </ul>
+        <button class="btn btn-login ms-3">تسجيل الدخول</button>
+        <button class="btn btn-apply btn-primary ms-2">قدم الآن</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header Section -->
+  <section class="header-section">
+    <div class="container">
+      <div class="header-content">
+        <h1 class="display-4 fw-bold mb-3">البرامج الأكاديمية</h1>
+        <p class="lead mb-4">اكتشف مجموعة متنوعة من برامج الدراسات العليا والمهنية</p>
+   
+      </div>
+    </div>
+  </section>
+
+<!-- Program Categories Section -->
+<section class="py-5" dir="rtl">
+  <div class="container">
+    <h2 class="text-center mb-2">اكتشف البرامج المهنية</h2>
+    <p class="text-center text-muted mb-5">اكتشف البرامج المتخصصة التي تقدمها كلية الدراسات العليا للبحوث الإحصائية</p>
+    
+    <div class="row">
+      <!-- Category 1: Software Engineering -->
+      <div class="col-lg-4 col-md-6">
+        <div class="category-card">
+          <img src="static/img/header.jpg" class="card-img-top category-img" alt="هندسة البرمجيات">
+          <div class="category-overlay">
+            <div class="category-content">
+              <div class="category-icon">
+                <i class="fas fa-laptop-code text-white"></i>
+              </div>
+              <h4>هندسة البرمجيات</h4>
+              <p class="mb-2">دبلوم، ماجستير، دكتوراه</p>
+              <a href="#software-engineering" class="text-white">اكتشف <i class="fas fa-arrow-left ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Category 2: Web Design -->
+      <div class="col-lg-4 col-md-6">
+        <div class="category-card">
+          <img src="static/img/header.jpg" class="card-img-top category-img" alt="تصميم الويب">
+          <div class="category-overlay">
+            <div class="category-content">
+              <div class="category-icon">
+                <i class="fas fa-globe text-white"></i>
+              </div>
+              <h4>تصميم الويب</h4>
+              <p class="mb-2">دبلوم، ماجستير، دكتوراه</p>
+              <a href="#web-design" class="text-white">اكتشف <i class="fas fa-arrow-left ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Category 3: Project Management -->
+      <div class="col-lg-4 col-md-6">
+        <div class="category-card">
+          <img src="static/img/header.jpg" class="card-img-top category-img" alt="إدارة المشاريع">
+          <div class="category-overlay">
+            <div class="category-content">
+              <div class="category-icon">
+                <i class="fas fa-tasks text-white"></i>
+              </div>
+              <h4>إدارة المشاريع</h4>
+              <p class="mb-2">دبلوم، ماجستير، دكتوراه</p>
+              <a href="#project-management" class="text-white">اكتشف <i class="fas fa-arrow-left ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Category 4: Operations Research -->
+      <div class="col-lg-4 col-md-6">
+        <div class="category-card">
+          <img src="static/img/header.jpg" class="card-img-top category-img" alt="بحوث العمليات">
+          <div class="category-overlay">
+            <div class="category-content">
+              <div class="category-icon">
+                <i class="fas fa-cogs text-white"></i>
+              </div>
+              <h4>بحوث العمليات ودعم القرار</h4>
+              <p class="mb-2">دبلوم، ماجستير، دكتوراه</p>
+              <a href="#operations-research" class="text-white">اكتشف <i class="fas fa-arrow-left ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Category 5: Risk Management -->
+      <div class="col-lg-4 col-md-6">
+        <div class="category-card">
+          <img src="static/img/header.jpg" class="card-img-top category-img" alt="إدارة المخاطر">
+          <div class="category-overlay">
+            <div class="category-content">
+              <div class="category-icon">
+                <i class="fas fa-exclamation-triangle text-white"></i>
+              </div>
+              <h4>إدارة المخاطر والأزمات</h4>
+              <p class="mb-2">دبلوم، ماجستير، دكتوراه</p>
+              <a href="#risk-management" class="text-white">اكتشف <i class="fas fa-arrow-left ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Category 6: Human Resources -->
+      <div class="col-lg-4 col-md-6">
+        <div class="category-card">
+          <img src="static/img/header.jpg" class="card-img-top category-img" alt="إدارة الموارد البشرية">
+          <div class="category-overlay">
+            <div class="category-content">
+              <div class="category-icon">
+                <i class="fas fa-users text-white"></i>
+              </div>
+              <h4>إدارة الموارد البشرية</h4>
+              <p class="mb-2">دبلوم، ماجستير، دكتوراه</p>
+              <a href="#human-resources" class="text-white">اكتشف <i class="fas fa-arrow-left ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="text-center mt-4">
+      <a href="#all-programs" class="btn btn-outline-primary">عرض جميع البرامج</a>
+    </div>
+  </div>
+</section>
+
+
+
+  <!-- FGSSR Programs Section -->
+  <section class="py-5 bg-light" id="fgssr">
+    <div class="container">
+      <h2 class="text-center mb-2">كلية الدراسات العليا للبحوث الإحصائية</h2>
+      <p class="text-center text-muted mb-5">برامج مهنية مصممة لتلبية متطلبات الصناعة وتطوير الخبرات التقنية</p>
+      
+      <div class="row mb-5">
+        <div class="col-lg-6">
+          <img src="static/img/FGSSR.jpg" alt="مبنى كلية الدراسات العليا للبحوث الإحصائية" class="img-fluid rounded shadow">
+        </div>
+        <div class="col-lg-6">
+          <h3 class="mb-3">عن الكلية</h3>
+          <p>كلية الدراسات العليا للبحوث الإحصائية (FGSSR) هي واحدة من أقدم وأعرق المؤسسات التعليمية المتقدمة في الإحصاء وعلوم الحاسب والمجالات ذات الصلة في مصر. لأكثر من 70 عامًا، كانت الكلية رائدة في التعليم الإحصائي والبحث العلمي.</p>
+          
+          <p>تقدم الكلية مجموعة واسعة من البرامج المهنية المصممة لتزويد الطلاب بالمهارات التقنية والخبرات المطلوبة في سوق العمل اليوم. مع أكثر من 18 برنامجًا متخصصًا، تعد الكلية خريجيها للتميز في مجالات مختلفة بما في ذلك علم البيانات، هندسة البرمجيات، إدارة المخاطر، والمزيد.</p>
+          
+          <div class="d-flex flex-wrap gap-3 mt-4">
+            <button class="btn btn-primary">اتصل بالكلية</button>
+            <button class="btn btn-outline-primary">تحميل البروشور</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Software Engineering Program -->
+      <div class="card border-0 shadow-lg mb-5">
+        <div class="card-body p-4">
+          <div class="row align-items-center">
+            <div class="col-lg-8">
+              <h3 class="card-title text-primary">ماجستير مهني في هندسة البرمجيات</h3>
+              <p class="card-text lead mb-3">برنامج شامل مصمم لتطوير المهارات المتقدمة في تطوير البرمجيات، التصميم، ومبادئ الهندسة.</p>
+              
+              <div class="d-flex flex-wrap gap-3 mb-3">
+                <span class="badge bg-primary">ماجستير مهني</span>
+                <span class="badge bg-info">مدة عامين</span>
+                <span class="badge bg-success">39 ساعة معتمدة</span>
+              </div>
+              
+              <p>يتكون برنامج ماجستير هندسة البرمجيات من مرحلتين رئيسيتين:</p>
+              <ul>
+                <li><strong>المرحلة الأولى:</strong> يجب على الطلاب إكمال 21 ساعة معتمدة من المقررات موزعة على فصلين دراسيين</li>
+                <li><strong>المرحلة الثانية:</strong> الاختيار بين مسار البحث (رسالة) أو مسار المقررات (21 ساعة معتمدة إضافية بما في ذلك مشروع)</li>
+              </ul>
+              
+              <div class="mt-4">
+                <a href="#se-details" class="btn btn-outline-primary" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="se-details">
+                  عرض تفاصيل البرنامج <i class="fas fa-chevron-down ms-1"></i>
+                </a>
+              </div>
+              
+              <div class="collapse mt-3" id="se-details">
+                <div class="card card-body bg-light border-0">
+                  <h5 class="mb-3">المتطلبات الأساسية</h5>
+                  <ul>
+                    <li><strong>المؤهلات الأكاديمية:</strong> درجة البكالوريوس في تكنولوجيا المعلومات والاتصالات أو مجال مكافئ</li>
+                    <li><strong>لغير تخصصات تكنولوجيا المعلومات:</strong> إكمال دبلوم هندسة البرمجيات التمهيدي</li>
+                    <li><strong>مقابلة شخصية:</strong> مع لجنة الجامعة</li>
+                  </ul>
+                  
+                  <h5 class="mb-3 mt-4">هيكل المقررات</h5>
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead class="table-primary">
+                        <tr>
+                          <th colspan="3">السنة الأولى - الفصل الأول (9 ساعات معتمدة)</th>
+                        </tr>
+                        <tr>
+                          <th>رمز المقرر</th>
+                          <th>اسم المقرر</th>
+                          <th>الساعات المعتمدة</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>SE201</td>
+                          <td>مبادئ ومنهجيات البحث العلمي</td>
+                          <td>3</td>
+                        </tr>
+                        <tr>
+                          <td>SE202</td>
+                          <td>ضمان جودة البرمجيات</td>
+                          <td>3</td>
+                        </tr>
+                        <tr>
+                          <td>SE203</td>
+                          <td>موضوعات متقدمة في قواعد البيانات</td>
+                          <td>3</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  <div class="table-responsive mt-3">
+                    <table class="table table-bordered">
+                      <thead class="table-primary">
+                        <tr>
+                          <th colspan="3">السنة الأولى - الفصل الثاني (12 ساعة معتمدة)</th>
+                        </tr>
+                        <tr>
+                          <th>رمز المقرر</th>
+                          <th>اسم المقرر</th>
+                          <th>الساعات المعتمدة</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>SE204</td>
+                          <td>موضوعات متقدمة في نظم المعلومات</td>
+                          <td>3</td>
+                        </tr>
+                        <tr>
+                          <td>SE205</td>
+                          <td>أمن المعلومات</td>
+                          <td>3</td>
+                        </tr>
+                        <tr>
+                          <td>SE206</td>
+                          <td>تطوير البرمجيات الرشيقة المتقدم</td>
+                          <td>3</td>
+                        </tr>
+                        <tr>
+                          <td>SE207</td>
+                          <td>مشروع</td>
+                          <td>3</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  <h5 class="mb-3 mt-4">نتائج التعلم</h5>
+                  <p>سيتمكن الخريجون من:</p>
+                  <ul>
+                    <li>إجراء البحوث العلمية في هندسة البرمجيات</li>
+                    <li>تنفيذ تقنيات متقدمة لضمان جودة البرمجيات</li>
+                    <li>تصميم وإدارة أنظمة قواعد البيانات المعقدة</li>
+                    <li>تطوير نظم معلومات آمنة</li>
+                    <li>إنشاء تطبيقات تعتمد على الحوسبة السحابية</li>
+                    <li>تطبيق مفاهيم التعلم الآلي</li>
+                    <li>قيادة مشاريع تطوير البرمجيات</li>
+                  </ul>
+                  
+                  <h5 class="mb-3 mt-4">نظام التقييم</h5>
+                  <ul>
+                    <li><strong>أعمال نصف السنة:</strong> 60% (واجبات، اختبارات قصيرة، مشاريع، وامتحانات نصفية)</li>
+                    <li><strong>الامتحان النهائي:</strong> 40%</li>
+                    <li><strong>معايير النجاح:</strong> الحد الأدنى للدرجة الكلية 50/100 والحد الأدنى 20/40 في الامتحان النهائي</li>
+                  </ul>
+                  
+                  <h5 class="mb-3 mt-4">نظام معلومات الطلاب</h5>
+                  <p>يمكن الوصول إلى منصة FGSSR SIS عبر <a href="https://csds.cu.edu.eg/" target="_blank">https://csds.cu.edu.eg/</a></p>
+                  <ul>
+                    <li>اسم المستخدم هو رقم الجامعة</li>
+                    <li>كلمة المرور هي الرقم القومي</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 text-center">
+              <div class="p-3 bg-light rounded-circle d-inline-flex justify-content-center align-items-center" style="width: 160px; height: 160px;">
+                <i class="fas fa-laptop-code fa-5x text-primary"></i>
+              </div>
+              <div class="mt-4">
+                <a href="#" class="btn btn-primary w-100 mb-2">قدم الآن</a>
+                <a href="#" class="btn btn-outline-primary w-100">تحميل المنهج</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- All Programs Section -->
+      <h3 class="text-center mb-4" id="all-programs">جميع البرامج المهنية</h3>
+      
+      <div class="row g-4">
+        <!-- Program 1: Data Analysis -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-translate">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary rounded-circle p-2 me-3">
+                  <i class="fas fa-chart-line text-white"></i>
+                </div>
+                <h5 class="card-title mb-0">تحليل البيانات</h5>
+              </div>
+              <p class="card-text">تطوير المهارات في تحليل البيانات النوعية والكمية باستخدام التقنيات الإحصائية المتقدمة.</p>
+              <div class="mt-3">
+                <span class="badge bg-primary me-2">دبلوم</span>
+                <span class="badge bg-primary me-2">ماجستير</span>
+                <span class="badge bg-primary">دكتوراه</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary mt-3">تعرف أكثر</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Program 2: Statistical Quality Control -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-translate">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary rounded-circle p-2 me-3">
+                  <i class="fas fa-check-circle text-white"></i>
+                </div>
+                <h5 class="card-title mb-0">التحكم الإحصائي في الجودة</h5>
+              </div>
+              <p class="card-text">إتقان الأساليب الإحصائية والتقنيات لتحسين عمليات التحكم في الجودة في مختلف الصناعات.</p>
+              <div class="mt-3">
+                <span class="badge bg-primary me-2">دبلوم</span>
+                <span class="badge bg-primary me-2">ماجستير</span>
+                <span class="badge bg-primary">دكتوراه</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary mt-3">تعرف أكثر</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Program 3: Statistical Research -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-translate">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary rounded-circle p-2 me-3">
+                  <i class="fas fa-search text-white"></i>
+                </div>
+                <h5 class="card-title mb-0">البحث الإحصائي والتطوير</h5>
+              </div>
+              <p class="card-text">تعلم منهجيات البحث المتقدمة وتقنيات التطوير للتطبيقات الإحصائية.</p>
+              <div class="mt-3">
+                <span class="badge bg-primary me-2">دبلوم</span>
+                <span class="badge bg-primary me-2">ماجستير</span>
+                <span class="badge bg-primary">دكتوراه</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary mt-3">تعرف أكثر</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Program 4: Applied Statistics -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-translate">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary rounded-circle p-2 me-3">
+                  <i class="fas fa-table text-white"></i>
+                </div>
+                <h5 class="card-title mb-0">الإحصاء التطبيقي</h5>
+              </div>
+              <p class="card-text">إتقان الأساليب الإحصائية وتطبيقاتها العملية في حل المشكلات الواقعية.</p>
+              <div class="mt-3">
+                <span class="badge bg-primary me-2">دبلوم</span>
+                <span class="badge bg-primary me-2">ماجستير</span>
+                <span class="badge bg-primary">دكتوراه</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary mt-3">تعرف أكثر</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Program 5: Time Series Analysis -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-translate">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary rounded-circle p-2 me-3">
+                  <i class="fas fa-chart-area text-white"></i>
+                </div>
+                <h5 class="card-title mb-0">تحليل السلاسل الزمنية</h5>
+              </div>
+              <p class="card-text">تطوير الخبرة في تحليل بيانات السلاسل الزمنية وطرق التنبؤ للتطبيقات الاقتصادية والتجارية.</p>
+              <div class="mt-3">
+                <span class="badge bg-primary me-2">دبلوم</span>
+                <span class="badge bg-primary me-2">ماجستير</span>
+                <span class="badge bg-primary">دكتوراه</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary mt-3">تعرف أكثر</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Program 6: Statistical Computing -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-translate">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary rounded-circle p-2 me-3">
+                  <i class="fas fa-calculator text-white"></i>
+                </div>
+                <h5 class="card-title mb-0">الحوسبة الإحصائية</h5>
+              </div>
+              <p class="card-text">إتقان الأساليب الحسابية وتطبيقات البرمجيات للتحليل الإحصائي ومعالجة البيانات.</p>
+              <div class="mt-3">
+                <span class="badge bg-primary me-2">دبلوم</span>
+                <span class="badge bg-primary me-2">ماجستير</span>
+                <span class="badge bg-primary">دكتوراه</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary mt-3">تعرف أكثر</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Program 7: Life Testing -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-translate">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary rounded-circle p-2 me-3">
+                  <i class="fas fa-hourglass-half text-white"></i>
+                </div>
+                <h5 class="card-title mb-0">اختبار العمر وتحليل الموثوقية</h5>
+              </div>
+              <p class="card-text">تعلم الأساليب الإحصائية لتحليل دورة حياة المنتج والموثوقية في التطبيقات الهندسية.</p>
+              <div class="mt-3">
+                <span class="badge bg-primary me-2">دبلوم</span>
+                <span class="badge bg-primary me-2">ماجستير</span>
+                <span class="badge bg-primary">دكتوراه</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary mt-3">تعرف أكثر</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Program 8: Population Studies -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-translate">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary rounded-circle p-2 me-3">
+                  <i class="fas fa-users text-white"></i>
+                </div>
+                <h5 class="card-title mb-0">سياسات السكان وتحليل البيانات</h5>
+              </div>
+              <p class="card-text">تطوير المهارات في تحليل بيانات السكان وصياغة السياسات الديموغرافية الفعالة.</p>
+              <div class="mt-3">
+                <span class="badge bg-primary me-2">دبلوم</span>
+                <span class="badge bg-primary me-2">ماجستير</span>
+                <span class="badge bg-primary">دكتوراه</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary mt-3">تعرف أكثر</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Program 9: Public Opinion Polls -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-translate">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary rounded-circle p-2 me-3">
+                  <i class="fas fa-poll text-white"></i>
+                </div>
+                <h5 class="card-title mb-0">استطلاعات الرأي العام</h5>
+              </div>
+              <p class="card-text">إتقان تقنيات تصميم وإجراء وتحليل استطلاعات الرأي العام.</p>
+              <div class="mt-3">
+                <span class="badge bg-primary me-2">دبلوم</span>
+                <span class="badge bg-primary me-2">ماجستير</span>
+                <span class="badge bg-primary">دكتوراه</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary mt-3">تعرف أكثر</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Program 10: Surveys & Reporting -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-translate">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary rounded-circle p-2 me-3">
+                  <i class="fas fa-clipboard-list text-white"></i>
+                </div>
+                <h5 class="card-title mb-0">الاستطلاعات وإعداد التقارير</h5>
+              </div>
+              <p class="card-text">تعلم أساليب تصميم الاستطلاعات وجمع البيانات وإنشاء التقارير التحليلية الفعالة.</p>
+              <div class="mt-3">
+                <span class="badge bg-primary me-2">دبلوم</span>
+                <span class="badge bg-primary me-2">ماجستير</span>
+                <span class="badge bg-primary">دكتوراه</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary mt-3">تعرف أكثر</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Program 11: Human Development -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-translate">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary rounded-circle p-2 me-3">
+                  <i class="fas fa-user-graduate text-white"></i>
+                </div>
+                <h5 class="card-title mb-0">التنمية البشرية والموارد</h5>
+              </div>
+              <p class="card-text">تطوير فهم شامل لمقاييس التنمية البشرية واستراتيجيات تخصيص الموارد.</p>
+              <div class="mt-3">
+                <span class="badge bg-primary me-2">دبلوم</span>
+                <span class="badge bg-primary me-2">ماجستير</span>
+                <span class="badge bg-primary">دكتوراه</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary mt-3">تعرف أكثر</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Program 12: Supply Chain Management -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-translate">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary rounded-circle p-2 me-3">
+                  <i class="fas fa-truck text-white"></i>
+                </div>
+                <h5 class="card-title mb-0">إدارة سلسلة التوريد والعمليات</h5>
+              </div>
+              <p class="card-text">إتقان تقنيات تحسين سلاسل التوريد وإدارة العمليات في
+    </div>
+  </section>
+
+  <!-- Application Process -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-2">كيفية التقديم</h2>
+      <p class="text-center text-muted mb-5">اتبع هذه الخطوات للانضمام إلى مجتمعنا الأكاديمي</p>
+      
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <div class="row">
+            <!-- Step 1 -->
+            <div class="col-md-4">
+              <div class="process-step">
+                <div class="step-number">1</div>
+                <h5>اختر برنامجًا</h5>
+                <p>تصفح برامجنا واختر البرنامج الذي يتوافق مع اهتماماتك وأهدافك المهنية.</p>
+              </div>
+            </div>
+            
+            <!-- Step 2 -->
+            <div class="col-md-4">
+              <div class="process-step">
+                <div class="step-number">2</div>
+                <h5>تحقق من المتطلبات</h5>
+                <p>تأكد من استيفائك للمؤهلات الأكاديمية وتوفر المستندات المطلوبة.</p>
+              </div>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="col-md-4">
+              <div class="process-step">
+                <div class="step-number">3</div>
+                <h5>تقديم الطلب</h5>
+                <p>أكمل نموذج الطلب عبر الإنترنت وادفع رسوم الطلب من خلال بوابتنا.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="text-center mt-5">
+            <button class="btn btn-primary btn-lg">ابدأ تقديمك الآن</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="py-5 testimonial-section">
+    <div class="container">
+      <h2 class="text-center mb-2">ما يقوله طلابنا</h2>
+      <p class="text-center text-muted mb-5">استمع إلى تجارب الطلاب الذين خاضوا برامجنا</p>
+      
+      <div class="row">
+        <!-- Testimonial 1 -->
+        <div class="col-lg-4">
+          <div class="testimonial-card bg-white position-relative">
+            <i class="fas fa-quote-right testimonial-quote"></i>
+            <div class="d-flex align-items-center mb-4">
+              <img src="static/img/icon.png" class="testimonial-img me-3" alt="طالب">
+              <div>
+                <h5 class="mb-0">أحمد إبراهيم</h5>
+                <p class="text-muted mb-0">هندسة البرمجيات، 2022</p>
+              </div>
+            </div>
+            <p class="mb-0">"برنامج هندسة البرمجيات في FGSSR منحني المهارات المتقدمة المطلوبة في سوق العمل اليوم. كان الأساتذة داعمين والمنهج الدراسي كان تحديًا في جميع الجوانب الصحيحة. حصلت على وظيفة كمطور كبير قبل التخرج."</p>
+          </div>
+        </div>
+        
+        <!-- Testimonial 2 -->
+        <div class="col-lg-4">
+          <div class="testimonial-card bg-white position-relative">
+            <i class="fas fa-quote-right testimonial-quote"></i>
+            <img src="static/img/icon.png" class="testimonial-img me-3" alt="طالب">
+            <div class="d-flex align-items-center mb-4">
+              <div>
+                <h5 class="mb-0">نور حسام</h5>
+                <p class="text-muted mb-0">تحليل البيانات، 2021</p>
+              </div>
+            </div>
+            <p class="mb-0">"برنامج تحليل البيانات زودني بالمهارات الأساسية في التحليل الإحصائي وتصور البيانات. قدمت المشاريع العملية ودراسات الحالة تجربة واقعية أطبقها يوميًا في دوري كمحلل بيانات في شركة متعددة الجنسيات."</p>
+          </div>
+        </div>
+        
+        <!-- Testimonial 3 -->
+        <div class="col-lg-4">
+          <div class="testimonial-card bg-white position-relative">
+            <i class="fas fa-quote-right testimonial-quote"></i>
+            <div class="d-flex align-items-center mb-4">
+              <img src="static/img/icon.png" class="testimonial-img me-3" alt="طالب">
+              <div>
+                <h5 class="mb-0">هاني محمود</h5>
+                <p class="text-muted mb-0">إدارة المشاريع، 2023</p>
+              </div>
+            </div>
+            <p class="mb-0">"كمحترف،سمحت لي مرونة البرنامج بمواصلة تعليمي مع التقدم في مسيرتي المهنية. ساعدتني المعرفة والشهادة التي حصلت عليها في تأمين ترقية إلى مدير مشروع في مؤسستي خلال أشهر من التخرج."</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-2">الأسئلة الشائعة</h2>
+      <p class="text-center text-muted mb-5">اعثر على إجابات للأسئلة الشائعة حول برامجنا</p>
+      
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <!-- FAQ Item 1 -->
+          <div class="faq-item">
+            <div class="faq-header" id="faq-header-1">
+              <h5>ما هي متطلبات القبول؟
+                <i class="fas fa-chevron-down faq-icon"></i>
+              </h5>
+            </div>
+            <div class="faq-body" id="faq-body-1">
+              <p>تختلف متطلبات القبول حسب البرنامج ولكنها تشمل عمومًا درجة البكالوريوس من مؤسسة معتمدة، السجلات الأكاديمية الرسمية، نموذج الطلب، وقد تشمل مقابلات أو امتحانات قبول. تتطلب بعض البرامج مقررات تمهيدية محددة للمتقدمين من غير المتخصصين.</p>
+            </div>
+          </div>
+          
+          <!-- FAQ Item 2 -->
+          <div class="faq-item">
+            <div class="faq-header" id="faq-header-2">
+              <h5>هل تتوفر منح دراسية؟
+                <i class="fas fa-chevron-down faq-icon"></i>
+              </h5>
+            </div>
+            <div class="faq-body" id="faq-body-2">
+              <p>نعم، تقدم جامعة القاهرة منحًا دراسية مختلفة بناءً على الجدارة الأكاديمية، الحاجة المالية، والمواهب الخاصة. تتوفر أيضًا منح للطلاب الدوليين لبرامج محددة. اتصل بمكتب المساعدة المالية للحصول على أحدث المعلومات حول فرص المنح الدراسية.</p>
+            </div>
+          </div>
+          
+          <!-- FAQ Item 3 -->
+          <div class="faq-item">
+            <div class="faq-header" id="faq-header-3">
+              <h5>ما هو نظام التقييم؟
+                <i class="fas fa-chevron-down faq-icon"></i>
+              </h5>
+            </div>
+            <div class="faq-body" id="faq-body-3">
+              <p>بالنسبة للبرامج المهنية، يتكون نظام التقييم عادةً من:</p>
+              <ul>
+                <li>أعمال نصف السنة (60%): تشمل الواجبات، الاختبارات القصيرة، المشاريع، والامتحانات النصفية</li>
+                <li>الامتحان النهائي (40%)</li>
+                <li>لاجتياز المقرر، يجب أن يحصل الطلاب على 50/100 على الأقل كدرجة كلية و20/40 كحد أدنى في الامتحان النهائي</li>
+              </ul>
+            </div>
+          </div>
+          
+          <!-- FAQ Item 4 -->
+          <div class="faq-item">
+            <div class="faq-header" id="faq-header-4">
+              <h5>كم من الوقت يستغرق إكمال البرنامج؟
+                <i class="fas fa-chevron-down faq-icon"></i>
+              </h5>
+            </div>
+            <div class="faq-body" id="faq-body-4">
+              <p>تختلف مدة البرنامج:</p>
+              <ul>
+                <li>الدبلومات المهنية: عام واحد (فصلين دراسيين)</li>
+                <li>درجات الماجستير: عامين على الأقل (4 فصول دراسية)</li>
+                <li>درجات الدكتوراه: 3-4 سنوات على الأقل</li>
+              </ul>
+              <p>لكل برنامج مدة قصوى مسموح بها للإكمال، والتي يتم تحديدها في تفاصيل البرنامج.</p>
+            </div>
+          </div>
+          
+          <!-- FAQ Item 5 -->
+          <div class="faq-item">
+            <div class="faq-header" id="faq-header-5">
+              <h5>هل يمكنني تحويل الساعات المعتمدة من جامعة أخرى؟
+                <i class="fas fa-chevron-down faq-icon"></i>
+              </h5>
+            </div>
+            <div class="faq-body" id="faq-body-5">
+              <p>نعم، نقبل تحويل الساعات المعتمدة من الجامعات المعتمدة. يمكن تحويل الساعات إذا كانت المقررات مكافئة في المحتوى والمستوى لتلك المقدمة في جامعة القاهرة. يختلف الحد الأقصى لعدد الساعات المعتمدة القابلة للتحويل حسب البرنامج. اتصل بمكتب القبول للحصول على تفاصيل محددة حول حالتك.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Footer Section -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4">
+          <h5>جامعة القاهرة</h5>
+          <p>تقديم تعليم عالي الجودة منذ عام 1908. واحدة من أقدم وأعرق الجامعات في إفريقيا والشرق الأوسط.</p>
+        </div>
+        <div class="col-lg-2">
+          <h5>البرامج</h5>
+          <a href="#">المرحلة الجامعية</a>
+          <a href="#">الدراسات العليا</a>
+          <a href="#">البرامج المهنية</a>
+          <a href="#">الدورات عبر الإنترنت</a>
+        </div>
+        <div class="col-lg-2">
+          <h5>الموارد</h5>
+          <a href="#">المكتبة</a>
+          <a href="#">البحث العلمي</a>
+          <a href="#">المنشورات</a>
+          <a href="#">خدمات التوظيف</a>
+        </div>
+        <div class="col-lg-4">
+          <h5>اتصل بنا</h5>
+          <p>جامعة القاهرة، الجيزة، مصر<br>
+          الهاتف: +20 2 35676105<br>
+          البريد الإلكتروني: info@cu.edu.eg</p>
+          <div class="d-flex gap-3 mt-3">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="text-center copyright">
+        <p>&copy; 2025 جامعة القاهرة. جميع الحقوق محفوظة.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get all FAQ headers
+      const faqHeaders = document.querySelectorAll('.faq-header');
+      
+      // Add click event listeners to each header
+      faqHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+          // Toggle active class on the header
+          this.classList.toggle('active');
+          
+          // Get the body element
+          const body = this.nextElementSibling;
+          
+          // Toggle the display of the body
+          if (this.classList.contains('active')) {
+            body.style.display = 'block';
+          } else {
+            body.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

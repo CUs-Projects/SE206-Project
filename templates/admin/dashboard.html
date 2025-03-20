@@ -1,0 +1,170 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}Admin Dashboard{% endblock %}
+
+{% block main_content %}
+<div class="stats-grid">
+    <!-- Stats cards row -->
+    <div class="stat-card">
+        <div class="stat-content">
+            <div>
+                <h3 class="stat-title">New Applications</h3>
+                <p class="stat-value">{{ applications_count }}</p>
+            </div>
+            <div class="stat-icon blue">
+                <i class="fas fa-file-alt"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-content">
+            <div>
+                <h3 class="stat-title">Pending Payments</h3>
+                <p class="stat-value">{{ payment_pending_count }}</p>
+            </div>
+            <div class="stat-icon yellow">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-content">
+            <div>
+                <h3 class="stat-title">Open Tickets</h3>
+                <p class="stat-value">{{ open_tickets }}</p>
+            </div>
+            <div class="stat-icon red">
+                <i class="fas fa-comment"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard Grid -->
+<div class="dashboard-grid">
+    <!-- Recent Applications -->
+    <div class="card">
+        <div class="card-header">
+            <h3>Recent Applications</h3>
+            <a href="{{ url_for('admin_applications') }}" class="view-all">View All</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Program</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in recent_applications %}
+                        <tr>
+                            <td>{{ app.app_id }}</td>
+                            <td>{{ app.user.full_name }}</td>
+                            <td>{{ app.program }}</td>
+                            <td>
+                                <span class="status-badge 
+                                    {% if app.status == 'Pending Review' %}yellow
+                                    {% elif app.status == 'Documents Approved' %}green
+                                    {% elif app.status == 'Documents Rejected' %}red
+                                    {% elif app.status == 'Payment Pending' %}blue
+                                    {% endif %}">
+                                    {{ app.status }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center">No recent applications</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Recent Support Tickets -->
+    <div class="card">
+        <div class="card-header">
+            <h3>Recent Support Tickets</h3>
+            <a href="{{ url_for('admin_tickets') }}" class="view-all">View All</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Subject</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in recent_tickets %}
+                        <tr>
+                            <td>{{ ticket.ticket_id }}</td>
+                            <td>{{ ticket.subject }}</td>
+                            <td>
+                                <span class="status-badge 
+                                    {% if ticket.status == 'Open' %}red
+                                    {% elif ticket.status == 'In Progress' %}yellow
+                                    {% elif ticket.status == 'Closed' %}green
+                                    {% endif %}">
+                                    {{ ticket.status }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center">No recent tickets</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Certificates -->
+    <div class="card">
+        <div class="card-header">
+            <h3>Recent Certificate Requests</h3>
+        </div>
+        <div class="card-body">
+            {% if recent_certificates %}
+                <ul class="recent-list">
+                    {% for certificate in recent_certificates %}
+                    <li class="recent-item">
+                        <div class="recent-item-header">
+                            <h4>{{ certificate.type }}</h4>
+                            <span class="status-badge 
+                                {% if certificate.status == 'Pending Payment' %}yellow
+                                {% elif certificate.status == 'Processing' %}blue
+                                {% elif certificate.status == 'Ready for Pickup' %}green
+                                {% endif %}">
+                                {{ certificate.status }}
+                            </span>
+                        </div>
+                        <p>Requested by: {{ certificate.user.full_name }}</p>
+                        <p>Requested on: {{ certificate.request_date|format_date }}</p>
+                        <div class="item-actions">
+                            <a href="{{ url_for('admin_certificates') }}?cert_id={{ certificate.cert_id }}" class="btn primary btn-sm">View Details</a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">No recent certificate requests.</p>
+            {% endif %}
+            <div class="text-center mt-4">
+                <a href="{{ url_for('admin_certificates') }}" class="view-all-link">
+                    View All Certificate Requests
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

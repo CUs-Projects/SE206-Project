@@ -1,0 +1,86 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}Edit Project - Admin Dashboard{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Edit Project</h2>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin_edit_project', project_id=project.id) }}" enctype="multipart/form-data">
+            <div class="form-group mb-3">
+                <label for="title" class="form-label">Project Title</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ project.title }}" required>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="4" required>{{ project.description }}</textarea>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" name="category" required>
+                    <option value="">Select a category</option>
+                    {% for category in ['Research', 'Academic', 'Development', 'Innovation'] %}
+                        <option value="{{ category }}" {% if project.category == category %}selected{% endif %}>
+                            {{ category }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="url" class="form-label">Project URL</label>
+                <input type="url" class="form-control" id="url" name="url" value="{{ project.url or '' }}">
+                <small class="text-muted">Optional: Link to project details or external resources</small>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="image" class="form-label">Project Image</label>
+                {% if project.image_path %}
+                    <div class="current-image mb-2">
+                        <img src="{{ url_for('static', filename=project.image_path) }}" 
+                             alt="Current project image" 
+                             style="max-width: 200px;">
+                        <p class="text-muted">Current image</p>
+                    </div>
+                {% endif %}
+                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                <small class="text-muted">Recommended size: 800x600px, Max size: 2MB. Leave empty to keep current image.</small>
+            </div>
+
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="is_popular" name="is_popular" 
+                       {% if project.is_popular %}checked{% endif %}>
+                <label class="form-check-label" for="is_popular">Feature this project</label>
+            </div>
+
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="is_active" name="is_active" 
+                       {% if project.is_active %}checked{% endif %}>
+                <label class="form-check-label" for="is_active">Project is active</label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{{ url_for('admin_projects') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    const fileInput = document.getElementById('image');
+    if (fileInput.files.length > 0) {
+        const fileSize = fileInput.files[0].size / 1024 / 1024; // Convert to MB
+        if (fileSize > 2) {
+            e.preventDefault();
+            alert('Image file size must be less than 2MB');
+        }
+    }
+});
+</script>
+{% endblock %}

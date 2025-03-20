@@ -1,0 +1,331 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}Account Settings{% endblock %}
+
+{% block main_content %}
+<div class="card mb-6">
+    <div class="card-header">
+        <h3>Personal Information</h3>
+    </div>
+    
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('student_update_settings') }}">
+            <div class="settings-grid">
+                <div class="settings-section">
+                    <div class="form-group">
+                        <label for="full_name">Full Name</label>
+                        <input type="text" id="full_name" name="full_name" class="form-input" 
+                               value="{{ current_user.full_name }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-input" 
+                               value="{{ current_user.email }}" disabled>
+                        <p class="text-muted mt-1">Email address cannot be changed</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="form-input" 
+                               value="{{ current_user.phone if current_user.phone else '' }}">
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <div class="form-group">
+                        <label for="nationality">Nationality</label>
+                        <select id="nationality" name="nationality" class="form-input" disabled>
+                            <option value="Egyptian" {% if current_user.nationality == 'Egyptian' %}selected{% endif %}>Egyptian</option>
+                            <option value="International" {% if current_user.nationality == 'International' %}selected{% endif %}>International</option>
+                        </select>
+                        <p class="text-muted mt-1">Nationality cannot be changed</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="education">Highest Education Level</label>
+                        <select id="education" name="education" class="form-input" disabled>
+                            <option value="Bachelor's Degree" {% if current_user.education == 'Bachelor\'s Degree' %}selected{% endif %}>Bachelor's Degree</option>
+                            <option value="Master's Degree" {% if current_user.education == 'Master\'s Degree' %}selected{% endif %}>Master's Degree</option>
+                            <option value="PhD" {% if current_user.education == 'PhD' %}selected{% endif %}>PhD</option>
+                        </select>
+                        <p class="text-muted mt-1">Education level cannot be changed</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea id="address" name="address" rows="3" class="form-input">{{ current_user.address if current_user.address else '' }}</textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mb-6">
+    <div class="card-header">
+        <h3>Change Password</h3>
+    </div>
+    
+    <div class="card-body">
+        <form id="change-password-form" method="POST" action="{{ url_for('student_change_password') }}">
+            <div class="form-group">
+                <label for="current_password">Current Password</label>
+                <input type="password" id="current_password" name="current_password" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="new_password">New Password</label>
+                <input type="password" id="new_password" name="new_password" class="form-input" required>
+                <p class="text-muted mt-1">Password must be at least 8 characters long</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm_password">Confirm New Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-input" required>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn primary">Change Password</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Notification Preferences</h3>
+    </div>
+    
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('student_update_notification_preferences') }}">
+            <div class="settings-options">
+                <div class="toggle-setting">
+                    <span>Email notifications</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="email_notifications" name="email_notifications" 
+                               class="toggle-checkbox" checked>
+                        <label for="email_notifications" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div class="toggle-setting">
+                    <span>SMS notifications</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="sms_notifications" name="sms_notifications" 
+                               class="toggle-checkbox" checked>
+                        <label for="sms_notifications" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div class="toggle-setting">
+                    <span>Application updates</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="application_updates" name="application_updates" 
+                               class="toggle-checkbox" checked>
+                        <label for="application_updates" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div class="toggle-setting">
+                    <span>Payment confirmations</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="payment_confirmations" name="payment_confirmations" 
+                               class="toggle-checkbox" checked>
+                        <label for="payment_confirmations" class="toggle-label"></label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn primary">Save Preferences</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-6">
+    <div class="card-header">
+        <h3>Account Actions</h3>
+    </div>
+    
+    <div class="card-body">
+        <div class="account-actions">
+            <div class="action-item">
+                <div>
+                    <h4>Download Personal Data</h4>
+                    <p class="text-muted">Download a copy of all your personal data stored in our system.</p>
+                </div>
+                <button id="download-data-btn" class="btn outline">Download Data</button>
+            </div>
+            
+            <div class="action-item">
+                <div>
+                    <h4>Clear Notifications</h4>
+                    <p class="text-muted">Clear all read notifications from your account.</p>
+                </div>
+                <button id="clear-notifications-btn" class="btn outline">Clear Notifications</button>
+            </div>
+            
+            <div class="action-item border-red">
+                <div>
+                    <h4 class="text-red">Delete Account</h4>
+                    <p class="text-muted">Permanently delete your account and all associated data.</p>
+                </div>
+                <button id="delete-account-btn" class="btn danger">Delete Account</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Confirmation Modal -->
+<div id="delete-account-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Delete Account</h3>
+            <button class="close-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="alert danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <h4>Warning: This action cannot be undone</h4>
+                    <p>Deleting your account will permanently remove all your data, including applications, documents, certificates, and support tickets.</p>
+                </div>
+            </div>
+            
+            <p class="mt-4">To confirm, please enter your password:</p>
+            <div class="form-group">
+                <input type="password" id="confirm-delete-password" class="form-input" placeholder="Enter your password">
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn outline close-modal">Cancel</button>
+            <button id="confirm-delete-btn" class="btn danger">Delete My Account</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Password validation
+    const passwordForm = document.getElementById('change-password-form');
+    const newPassword = document.getElementById('new_password');
+    const confirmPassword = document.getElementById('confirm_password');
+    
+    passwordForm.addEventListener('submit', function(e) {
+        if (newPassword.value !== confirmPassword.value) {
+            e.preventDefault();
+            alert('The new passwords do not match.');
+        }
+        
+        if (newPassword.value.length < 8) {
+            e.preventDefault();
+            alert('Password must be at least 8 characters long.');
+        }
+    });
+    
+    // Download data
+    document.getElementById('download-data-btn').addEventListener('click', function() {
+        // In a real app, this would trigger a download of user data
+        alert('Your data download is being prepared. You will receive a link via email shortly.');
+    });
+    
+    // Clear notifications
+    document.getElementById('clear-notifications-btn').addEventListener('click', function() {
+        fetch('/mark_notifications_read', {
+            method: 'POST'
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('All notifications have been cleared.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    });
+    
+    // Delete account modal
+    const deleteAccountBtn = document.getElementById('delete-account-btn');
+    const deleteAccountModal = document.getElementById('delete-account-modal');
+    const closeModalBtns = document.querySelectorAll('.close-modal');
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+    
+    deleteAccountBtn.addEventListener('click', function() {
+        deleteAccountModal.classList.remove('hidden');
+    });
+    
+    closeModalBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            deleteAccountModal.classList.add('hidden');
+            document.getElementById('confirm-delete-password').value = '';
+        });
+    });
+    
+    confirmDeleteBtn.addEventListener('click', function() {
+        const password = document.getElementById('confirm-delete-password').value;
+        
+        if (!password) {
+            alert('Please enter your password to confirm account deletion.');
+            return;
+        }
+        
+        // In a real app, this would send a request to delete the account
+        alert('This is a demo. In a real application, your account would be deleted now.');
+        deleteAccountModal.classList.add('hidden');
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(e) {
+        if (e.target === deleteAccountModal) {
+            deleteAccountModal.classList.add('hidden');
+            document.getElementById('confirm-delete-password').value = '';
+        }
+    });
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Account Actions Styles */
+    .account-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .action-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+    }
+    
+    .action-item h4 {
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+    
+    .border-red {
+        border-color: #ef4444;
+    }
+    
+    .text-red {
+        color: #ef4444;
+    }
+</style>
+{% endblock %}

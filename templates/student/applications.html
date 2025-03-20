@@ -1,0 +1,78 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}My Applications{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header-with-actions">
+        <h3>My Applications</h3>
+        <a href="{{ url_for('student_new_application') }}" class="btn primary">New Application</a>
+    </div>
+    
+    <div class="card-body">
+        {% if applications %}
+            {% for application in applications %}
+                <div class="application-card">
+                    <div class="application-header">
+                        <div>
+                            <h4>{{ application.program }}</h4>
+                            <p class="application-id">Application ID: {{ application.app_id }}</p>
+                            <p class="application-date">Submitted: {{ application.date_submitted.strftime('%Y-%m-%d') }}</p>
+                        </div>
+                        <div class="application-status">
+                            <span class="status-badge 
+                                {% if application.status == 'Pending Review' %}yellow
+                                {% elif application.status == 'Documents Approved' %}green
+                                {% elif application.status == 'Documents Rejected' %}red
+                                {% endif %}">
+                                {{ application.status }}
+                            </span>
+                            <span class="status-badge 
+                                {% if application.payment_status == 'Pending' %}yellow
+                                {% elif application.payment_status == 'Paid' %}green
+                                {% endif %}">
+                                Payment: {{ application.payment_status }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="application-documents">
+                        <h5>Documents</h5>
+                        <ul class="document-list">
+                            {% for document in application.documents %}
+                                <li class="document-item">
+                                    <span>{{ document.name }}</span>
+                                    <span class="status-badge 
+                                        {% if document.status == 'Uploaded' %}blue
+                                        {% elif document.status == 'Verified' %}green
+                                        {% elif document.status == 'Rejected' %}red
+                                        {% endif %}">
+                                        {{ document.status }}
+                                    </span>
+                                </li>
+                            {% else %}
+                                <li class="document-item">
+                                    <span>No documents uploaded yet</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        
+                        <div class="application-actions">
+                            <a href="{{ url_for('student_upload_document') }}?app_id={{ application.id }}" class="btn primary">Upload Document</a>
+                            
+                            {% if application.status == 'Documents Approved' and application.payment_status == 'Pending' %}
+                                <a href="{{ url_for('student_payment', app_id=application.id) }}" class="btn success">Make Payment</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-6">
+                <p class="text-muted mb-4">You haven't submitted any applications yet.</p>
+                <a href="{{ url_for('student_new_application') }}" class="btn primary">Start New Application</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

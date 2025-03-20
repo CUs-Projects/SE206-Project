@@ -1,0 +1,23 @@
+.chat-message .message-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 0.25rem;
+}
+
+.message-sender {
+    font-weight: 500;
+}
+
+.chat-form {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.flex-grow {
+    flex-grow: 1;
+}

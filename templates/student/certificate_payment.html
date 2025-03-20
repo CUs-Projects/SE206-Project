@@ -1,0 +1,120 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}Certificate Payment{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header">
+        <h3>Certificate Payment</h3>
+    </div>
+    
+    <div class="card-body">
+        <div class="payment-details max-w-lg">
+            <div class="info-group">
+                <label>Certificate Type:</label>
+                <span>{{ certificate.certificate_type }}</span>
+            </div>
+            
+            <div class="info-group">
+                <label>Number of Copies:</label>
+                <span>{{ certificate.copies }}</span>
+            </div>
+            
+            <div class="info-group">
+                <label>Total Fee:</label>
+                <span class="fee-amount">{{ fee }} EGP</span>
+            </div>
+
+            <form method="POST" class="payment-form">
+                <!-- Add CSRF Token -->
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                
+                <div class="alert info mb-4">
+                    <i class="fas fa-info-circle"></i>
+                    <p>This is a simulation of the payment process. In a real application, this would connect to a payment gateway.</p>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn success btn-block">
+                        <i class="fas fa-check-circle"></i>
+                        Confirm Payment
+                    </button>
+                    <a href="{{ url_for('student_certificates') }}" class="btn secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.max-w-lg {
+    max-width: 32rem;
+    margin: 0 auto;
+}
+
+.payment-details {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-group {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.info-group:last-child {
+    border-bottom: none;
+}
+
+.info-group label {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.fee-amount {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #059669;
+}
+
+.btn-block {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.btn.success {
+    background-color: #059669;
+    color: white;
+}
+
+.btn.success:hover {
+    background-color: #047857;
+}
+
+.form-actions {
+    display: flex;
+    flex-direction: column;
+}
+
+.alert.info {
+    background-color: #e0f2fe;
+    border: 1px solid #bae6fd;
+    color: #0369a1;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.alert.info i {
+    margin-left: 0.5rem;
+}
+</style>
+{% endblock %}
